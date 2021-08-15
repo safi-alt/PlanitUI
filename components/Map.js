@@ -1,11 +1,14 @@
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import MapView, { Marker } from "react-native-maps";
-import MapViewDirections from "react-native-maps-directions";
+// import MapView, { Marker } from "react-native-maps";
+// import MapViewDirections from "react-native-maps-directions";
 import { useSelector } from "react-redux";
 import tw from "tailwind-react-native-classnames";
 import { selectDestination, selectOrigin } from "../slices/navSlice";
+// import { GOOGLE_MAPS_APIKEY } from "@env";
 import { GOOGLE_MAPS_APIKEY } from "@env";
+import MapView, { Marker } from "react-native-maps";
+import MapViewDirections from "react-native-maps-directions";
 
 const Map = () => {
   const origin = useSelector(selectOrigin);
@@ -39,6 +42,7 @@ const Map = () => {
           apikey={GOOGLE_MAPS_APIKEY}
           strokeColor="green"
           strokeWidth={3}
+          lineDashPattern={[0]}
         />
       )}
       {origin?.location && (
