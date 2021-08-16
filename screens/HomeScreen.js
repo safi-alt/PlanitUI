@@ -38,6 +38,7 @@ const HomeScreen = () => {
               })
             );
             dispatch(setDestination(null));
+            console.log("Origin", details.geometry.location);
           }}
           fetchDetails={true}
           returnKeyType={"search"}
