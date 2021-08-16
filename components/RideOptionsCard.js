@@ -9,6 +9,9 @@ import { FlatList } from "react-native";
 import { Image } from "react-native";
 import { useSelector } from "react-redux";
 import { selectTravelTimeInformation } from "../slices/navSlice";
+import "intl";
+import { Platform } from "react-native";
+import "intl/locale-data/jsonp/en";
 
 const data = [
   {
@@ -34,6 +37,10 @@ const data = [
 const SURGE_CHARGE_RATE = 1.5;
 const date = new Date();
 const hourRate = 2000;
+// const andriodInt = if (Platform.OS === "android") {
+//   if (typeof (Intl as any).__disableRegExpRestore === "function") {
+//       (Intl as any).__disableRegExpRestore();
+//   }
 
 const RideOptionsCard = () => {
   const navigation = useNavigation();
@@ -77,7 +84,7 @@ const RideOptionsCard = () => {
               <Text>{travelTimeInformation?.duration?.text}</Text>
             </View>
             <Text style={tw`text-xl`}>
-              {new Intl.NumberFormat("en-gb", {
+              {/* {new Intl.NumberFormat("en-gb", {
                 style: "currency",
                 currency: "PKR",
               }).format(
@@ -87,6 +94,15 @@ const RideOptionsCard = () => {
                     multiplier) /
                     10
                 )
+              )} */}
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "PKR",
+              }).format(
+                (travelTimeInformation?.duration.value *
+                  SURGE_CHARGE_RATE *
+                  multiplier) /
+                  10
               )}
             </Text>
           </TouchableOpacity>
