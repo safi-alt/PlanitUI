@@ -3,9 +3,11 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Input from "../../components/Input";
 import Colors from "../../constants/Colors";
-import MainButton from "../../components/MainButton.andriod";
+import { Button } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const EnterPinScreen = (props) => {
+  const navigation = useNavigation();
   return (
     <View style={styles.screen}>
       <View style={styles.textContainer}>
@@ -24,11 +26,8 @@ const EnterPinScreen = (props) => {
           Send PIN to mobile{" "}
           <TouchableOpacity
             onPress={() => {
-              props.navigation.navigate({
-                routeName: "ResetPin",
-                params: {
-                  numberPin: true,
-                },
+              navigation.navigate("ResetPinScreen", {
+                numberPin: true,
               });
             }}
           >
@@ -40,24 +39,20 @@ const EnterPinScreen = (props) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={() => {
-            props.navigation.navigate({
-              routeName: "ResetPin",
-              params: {
-                resendPin: true,
-              },
+            navigation.navigate("ResetPinScreen", {
+              resendPin: true,
             });
           }}
         >
           <Text>Resend PIN</Text>
         </TouchableOpacity>
         <View>
-          <MainButton
+          <Button
             onPress={() => {
-              props.navigation.navigate({ routeName: "Success" });
+              navigation.navigate("ResetSuccessScreen");
             }}
-          >
-            NEXT
-          </MainButton>
+            title="NEXT"
+          ></Button>
         </View>
       </View>
     </View>

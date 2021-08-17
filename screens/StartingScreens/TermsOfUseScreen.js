@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 
-import { Text, StyleSheet, View, ScrollView, CheckBox } from "react-native";
+import { Text, StyleSheet, View, ScrollView } from "react-native";
 
 import Colors from "../../constants/Colors";
-import MainButton from "../../components/MainButton.andriod";
+
+import { Button } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { CheckBox } from "react-native-elements";
+
 const TermsOfUseScreen = (props) => {
   const [isSelected, setSelection] = useState(false);
+  const navigation = useNavigation();
   return (
     <View style={styles.screen}>
       <View style={styles.termOfUseContainer}>
@@ -64,9 +69,8 @@ const TermsOfUseScreen = (props) => {
             </Text>
             <View style={styles.checkboxContainer}>
               <CheckBox
-                value={isSelected}
-                onValueChange={setSelection}
-                style={styles.checkbox}
+                checked={isSelected}
+                onPress={() => setSelection(!isSelected)}
               />
               <Text style={styles.label}>
                 Do you agree to the terms and conditions?
@@ -77,20 +81,19 @@ const TermsOfUseScreen = (props) => {
         </ScrollView>
       </View>
       <View style={styles.button}>
-        <MainButton
+        <Button
           onPress={() => {
-            props.navigation.navigate({ routeName: "MainProfile" });
+            navigation.navigate("HomeScreen");
           }}
-        >
-          NEXT
-        </MainButton>
+          title="NEXT"
+        ></Button>
       </View>
     </View>
   );
 };
 
-TermsOfUseScreen.navigationOptions = {
-  headerTitle: "Terms Of Use",
+TermsOfUseScreen.setOption = {
+  title: "Terms Of Use",
 };
 
 const styles = StyleSheet.create({

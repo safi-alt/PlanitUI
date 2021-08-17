@@ -3,9 +3,11 @@ import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 
 import Colors from "../../constants/Colors";
-import MainButton from "../../components/MainButton.andriod";
+import { Button } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const ResetSuccessScreen = (props) => {
+  const navigation = useNavigation();
   return (
     <View style={styles.screen}>
       <View style={styles.imageContainer}>
@@ -23,20 +25,19 @@ const ResetSuccessScreen = (props) => {
       </View>
       <View style={styles.buttonContainer}>
         <View>
-          <MainButton
+          <Button
             onPress={() => {
-              props.navigation.navigate({ routeName: "TermsOfUse" });
+              navigation.navigate("TermsOfUseScreen");
             }}
-          >
-            NEXT
-          </MainButton>
+            title="NEXT"
+          ></Button>
         </View>
       </View>
     </View>
   );
 };
 
-ResetSuccessScreen.navigationOptions = {
+ResetSuccessScreen.setOptions = {
   headerTitle: "Reset Pin Successful",
 };
 

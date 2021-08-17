@@ -3,12 +3,16 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 import Colors from "../../constants/Colors";
-import MainButton from "../../components/MainButton.andriod";
+// import AtThePark from "../../svg/AtThePark";
 import AtThePark from "../../svg/AtThePark";
+import { Button } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native";
 
 const WelcomeScreen = (props) => {
+  const navigation = useNavigation();
   return (
-    <View style={styles.screen}>
+    <SafeAreaView style={styles.screen}>
       <View style={styles.firstRow}>
         <View style={styles.circleContainerOne}>
           <View style={styles.circleOne}></View>
@@ -21,13 +25,12 @@ const WelcomeScreen = (props) => {
         <Text style={styles.welcomeText}>WELCOME!!!</Text>
         <Text style={styles.supportText}>A travel and tour application</Text>
         <View style={styles.button}>
-          <MainButton
+          <Button
             onPress={() => {
-              props.navigation.navigate({ routeName: "SignUp" });
+              navigation.navigate("SignUpScreen");
             }}
-          >
-            Get Started!
-          </MainButton>
+            title="Get Started!"
+          ></Button>
         </View>
       </View>
       <View style={styles.thirdRow}>
@@ -37,7 +40,7 @@ const WelcomeScreen = (props) => {
           <View style={styles.circleVerticalthree}></View>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

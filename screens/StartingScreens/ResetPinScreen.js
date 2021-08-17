@@ -2,11 +2,13 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Input from "../../components/Input";
 import Colors from "../../constants/Colors";
-import MainButton from "../../components/MainButton.andriod";
+import { Button } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const ResetPinScreen = (props) => {
-  const numberPin = props.navigation.getParam("numberPin");
-  const resendPin = props.navigation.getParam("resendPin");
+  const numberPin = props.route.params.numberPin;
+  const resendPin = props.route.params.resendPin;
+  const navigation = useNavigation();
   return (
     <View style={styles.screen}>
       <View style={styles.textContainer}>
@@ -27,22 +29,21 @@ const ResetPinScreen = (props) => {
       </View>
       <View style={styles.buttonContainer}>
         <View>
-          <MainButton
+          <Button
             onPress={() => {
-              props.navigation.navigate({ routeName: "EnterPin" });
+              navigation.navigate("EnterPinScreen");
             }}
-          >
-            NEXT
-          </MainButton>
+            title="NEXT"
+          ></Button>
         </View>
       </View>
     </View>
   );
 };
 
-ResetPinScreen.navigationOptions = (navData) => {
-  const numberPin = navData.navigation.getParam("numberPin");
-  const resendPin = navData.navigation.getParam("resendPin");
+ResetPinScreen.setOptions = (navData) => {
+  const numberPin = navData.route.params.numberPin;
+  const resendPin = navData.route.params.resendPin;
   return {
     headerTitle: numberPin ? "Enter Number" : resendPin ? "Enter E-mail" : "",
   };

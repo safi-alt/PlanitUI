@@ -4,10 +4,13 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 import Input from "../../components/Input";
 import Colors from "../../constants/Colors";
-import MainButton from "../../components/MainButton.andriod";
+
+import { Button } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const SignUpScreen = (props) => {
   const [isSignup, setIsSignup] = useState(false);
+  const navigation = useNavigation();
 
   return (
     <View style={styles.screen}>
@@ -63,13 +66,17 @@ const SignUpScreen = (props) => {
         </View>
       )}
       <View style={styles.buttonContainer}>
-        <MainButton
+        <TouchableOpacity
           onPress={() => {
-            props.navigation.navigate({ routeName: "EnterPin" });
+            {
+              isSignup
+                ? navigation.navigate("HomeScreen")
+                : navigation.navigate("EnterPinScreen");
+            }
           }}
         >
-          {isSignup ? "Log In" : "Sign Up"}
-        </MainButton>
+          <Text> {isSignup ? "Log In" : "Sign Up"}</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.textBase}>
         <Text style={styles.accountText}>Already have an account?</Text>
