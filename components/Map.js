@@ -9,6 +9,7 @@ import {
   selectOrigin,
   setTravelTimeInformation,
 } from "../slices/navSlice";
+// import { GOOGLE_MAPS_APIKEY } from "@env";
 import { GOOGLE_MAPS_APIKEY } from "@env";
 
 const Map = () => {
@@ -33,7 +34,7 @@ const Map = () => {
       )
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
+          // console.log(data);
           dispatch(setTravelTimeInformation(data.rows[0].elements[0]));
         });
     };

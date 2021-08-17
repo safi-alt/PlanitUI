@@ -8,10 +8,90 @@ import Colors from "../../constants/Colors";
 import { Button } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
+import { useDispatch } from "react-redux";
+import { setUser } from "../../slices/navSlice";
+
 const SignUpScreen = (props) => {
   const [isSignup, setIsSignup] = useState(false);
   const navigation = useNavigation();
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [token, setToken] = useState("");
+  // var token = "";
+  const [message, setMessage] = useState("");
 
+  const dispatch = useDispatch();
+
+  const handleSubmit = async () => {
+    const res = await fetch(`https://planit-fyp.herokuapp.com/api/users/`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+        phone,
+      }),
+    });
+    const response = await res.json();
+    if (response.token) {
+      setToken(response.token);
+      dispatch(
+        setUser({
+          name: response.name,
+          phone: response.phone,
+          token: response.token,
+        })
+      );
+      navigation.navigate("EnterPinScreen");
+      setName("");
+      setEmail("");
+      setPassword("");
+      setPhone("");
+    } else {
+      alert(`Error:${response.message}`);
+    }
+  };
+
+  const handleLogin = async () => {
+    const res = await fetch(
+      `https://planit-fyp.herokuapp.com/api/users/login`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      }
+    );
+    const response = await res.json();
+    console.log(response);
+    if (response.token) {
+      setToken(response.token);
+      dispatch(
+        setUser({
+          name: response.name,
+          phone: response.phone,
+          token: response.token,
+        })
+      );
+      navigation.navigate("HomeScreen");
+
+      setEmail("");
+      setPassword("");
+    } else {
+      alert(`Error:${response.message}`);
+    }
+  };
   return (
     <View style={styles.screen}>
       <View style={styles.imageContainer}>
@@ -30,6 +110,8 @@ const SignUpScreen = (props) => {
             autoCorrect={false}
             maxLength={50}
             keyboardType="email-address"
+            value={email}
+            onChangeText={(email) => setEmail(email)}
           />
           <Text style={styles.textStyles}>Enter Password</Text>
           <Input
@@ -37,6 +119,8 @@ const SignUpScreen = (props) => {
             autoCapitilize="none"
             autoCorrect={false}
             secureTextEntry={true}
+            value={password}
+            onChangeText={(password) => setPassword(password)}
           />
         </View>
       ) : (
@@ -47,6 +131,8 @@ const SignUpScreen = (props) => {
             autoCapitilize="none"
             autoCorrect={false}
             maxLength={50}
+            value={name}
+            onChangeText={(name) => setName(name)}
           />
           <Text style={styles.textStyles}>Enter E-mail</Text>
           <Input
@@ -55,6 +141,8 @@ const SignUpScreen = (props) => {
             autoCorrect={false}
             maxLength={50}
             keyboardType="email-address"
+            value={email}
+            onChangeText={(email) => setEmail(email)}
           />
           <Text style={styles.textStyles}>Enter Password</Text>
           <Input
@@ -62,17 +150,37 @@ const SignUpScreen = (props) => {
             autoCapitilize="none"
             autoCorrect={false}
             secureTextEntry={true}
+            value={password}
+            onChangeText={(password) => setPassword(password)}
+          />
+          <Text style={styles.textStyles}>Enter Phone</Text>
+          <Input
+            blurOnSubmit
+            autoCapitilize="none"
+            autoCorrect={false}
+            maxLength={50}
+            keyboardType="email-address"
+            value={phone}
+            onChangeText={(phone) => setPhone(phone)}
           />
         </View>
       )}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
+          // onPress={() => {
+          //   handleSubmit();
+          //   {
+          //     isSignup
+          //       ? navigation.navigate("HomeScreen")
+          //       : navigation.navigate("EnterPinScreen");
+          //   }
+          // }}
           onPress={() => {
-            {
-              isSignup
-                ? navigation.navigate("HomeScreen")
-                : navigation.navigate("EnterPinScreen");
-            }
+            isSignup ? handleLogin() : handleSubmit();
+            // if (token) navigation.navigate("HomeScreen");
+            // isSignup
+            //   ? navigation.navigate("HomeScreen")
+            //   : navigation.navigate("EnterPinScreen");
           }}
         >
           <Text> {isSignup ? "Log In" : "Sign Up"}</Text>

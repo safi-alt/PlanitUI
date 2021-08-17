@@ -1,16 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View, SafeAreaView, Image } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import NavOptions from "../components/NavOptions";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+// import { GOOGLE_MAPS_APIKEY } from "@env";
 import { GOOGLE_MAPS_APIKEY } from "@env";
 import { useDispatch } from "react-redux";
-import { setOrigin, setDestination } from "../slices/navSlice";
+import { setOrigin, setDestination, selectUser } from "../slices/navSlice";
 import NavFavourites from "../components/NavFavourites";
+import { Button } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const userInformation = useSelector(selectUser);
 
+  useEffect(() => {
+    console.log(userInformation);
+  }, []);
   return (
     <SafeAreaView style={tw`bg-white h-full`}>
       <View style={tw`p-5`}>
@@ -38,7 +47,7 @@ const HomeScreen = () => {
               })
             );
             dispatch(setDestination(null));
-            console.log("Origin", details.geometry.location);
+            // console.log("Origin", details.geometry.location);
           }}
           fetchDetails={true}
           returnKeyType={"search"}
@@ -54,6 +63,10 @@ const HomeScreen = () => {
         <NavOptions />
         <NavFavourites />
       </View>
+      <Button
+        title="Logout"
+        onPress={() => navigation.navigate("SignUpScreen")}
+      ></Button>
     </SafeAreaView>
   );
 };

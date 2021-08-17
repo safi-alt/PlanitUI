@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, SafeAreaView, View } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+// import { GOOGLE_MAPS_APIKEY } from "@env";
 import { GOOGLE_MAPS_APIKEY } from "@env";
 import { useDispatch } from "react-redux";
 import { setDestination } from "../slices/navSlice";
@@ -33,7 +34,7 @@ const NavigateCard = () => {
                   description: data.description,
                 })
               );
-              console.log("destination", details.geometry.location);
+              // console.log("destination", details.geometry.location);
               navigation.navigate("RideOptionsCard");
             }}
             query={{
