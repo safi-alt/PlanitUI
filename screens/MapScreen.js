@@ -10,6 +10,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Icon } from "react-native-elements";
 import { Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import TourOptionsCard from "../components/TourOptionsCard";
 
 const MapScreen = () => {
   const Stack = createStackNavigator();
@@ -38,6 +39,13 @@ const MapScreen = () => {
           <Stack.Screen
             name="RideOptionsCard"
             component={RideOptionsCard}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="TourOptionsCard"
+            component={TourOptionsCard}
             options={{
               headerShown: false,
             }}
