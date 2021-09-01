@@ -20,6 +20,10 @@ import SuccessScreen from "./screens/StartingScreens/SuccessScreen";
 
 import * as Font from "expo-font";
 import AppLoading from "expo-app-loading";
+import SideNavScreen from "./screens/SideNavScreen";
+import SplashScreen from "./screens/StartingScreens/SplashScreen";
+import SignInScreen from "./screens/StartingScreens/SignInScreen";
+import Communication from "./components/Communication";
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -53,6 +57,20 @@ export default function App() {
             keyboardVerticalOffset={Platform.OS === "ios" ? -64 : 0}
           >
             <Stack.Navigator>
+              {/* <Stack.Screen
+                name="SideNavScreen"
+                component={SideNavScreen}
+                options={{
+                  headerShown: false,
+                }}
+              /> */}
+              {/* <Stack.Screen
+                name="SplashScreen"
+                component={SplashScreen}
+                options={{
+                  headerShown: false,
+                }}
+              /> */}
               <Stack.Screen
                 name="WelcomeScreen"
                 component={WelcomeScreen}
@@ -60,32 +78,63 @@ export default function App() {
                   headerShown: false,
                 }}
               />
-
-              <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
-
-              <Stack.Screen name="EnterPinScreen" component={EnterPinScreen} />
-
-              <Stack.Screen name="ResetPinScreen" component={ResetPinScreen} />
-
+              <Stack.Screen
+                name="SignUpScreen"
+                component={SignUpScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="SignInScreen"
+                component={SignInScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="EnterPinScreen"
+                component={EnterPinScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="ResetPinScreen"
+                component={ResetPinScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
               <Stack.Screen
                 name="ResetSuccessScreen"
                 component={ResetSuccessScreen}
+                options={{
+                  headerShown: false,
+                }}
               />
-
               <Stack.Screen name="SuccessScreen" component={SuccessScreen} />
               <Stack.Screen
                 name="TermsOfUseScreen"
                 component={TermsOfUseScreen}
-                options={{ title: "Terms of Use" }}
+                options={{
+                  headerShown: false,
+                }}
               />
-
               <Stack.Screen
+                name="SideNavScreen"
+                component={SideNavScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              {/* <Stack.Screen
                 name="HomeScreen"
                 component={HomeScreen}
                 options={{
                   headerShown: false,
                 }}
-              />
+              /> */}
               <Stack.Screen
                 name="MapScreen"
                 component={MapScreen}
@@ -97,7 +146,9 @@ export default function App() {
                 name="ChatScreen"
                 component={ChatScreen}
                 options={{
-                  headerShown: false,
+                  headerTitle: "Chat Screen",
+                  headerBackTitle: () => null,
+                  headerRight: () => <Communication />,
                 }}
               />
             </Stack.Navigator>

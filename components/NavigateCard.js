@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import NavFavourites from "./NavFavourites";
 import { TouchableOpacity } from "react-native";
 import { Icon } from "react-native-elements";
+import Colors from "../constants/Colors";
 
 const NavigateCard = () => {
   const dispatch = useDispatch();
@@ -51,21 +52,27 @@ const NavigateCard = () => {
       >
         <TouchableOpacity
           onPress={() => navigation.navigate("RideOptionsCard")}
-          style={tw`flex flex-row justify-between bg-black w-24 px-4 py-3 rounded-full`}
+          style={[
+            tw`flex flex-row justify-between bg-black px-4 py-3 rounded-full`,
+            {
+              backgroundColor: Colors.primary,
+              alignItems: "center",
+            },
+          ]}
         >
-          <Icon name="car" type="font-awesome" color="white" size={16} />
-          <Text style={tw`text-white text-center`}>Guides</Text>
+          <Icon name="person-pin" type="material" color="white" size={30} />
+          <Text style={tw`text-white text-center`}>Search Guide</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={tw`flex flex-row justify-between w-24 px-4 py-3 rounded-full`}
+          style={tw`justify-around flex flex-row  w-24 px-4 py-3 rounded-full`}
         >
           <Icon
-            name="fast-food-outline"
-            type="ionicon"
+            name="person-pin-circle"
+            type="material"
             color="black"
-            size={16}
+            size={35}
           />
-          <Text style={tw`text-center`}>Guides</Text>
+          <Text style={tw`text-center`}>Book Guide</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

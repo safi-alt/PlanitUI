@@ -16,9 +16,7 @@ const HomeScreen = () => {
       <View style={tw`p-5`}>
         <Image
           style={styles.imageStyle}
-          source={{
-            uri: "https://links.papareact.com/gzs",
-          }}
+          source={require("../assets/planiTMainLogo.png")}
         />
         <GooglePlacesAutocomplete
           styles={{

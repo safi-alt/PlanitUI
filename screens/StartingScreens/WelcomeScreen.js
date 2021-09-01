@@ -1,6 +1,6 @@
 import React from "react";
 
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 import Colors from "../../constants/Colors";
 // import AtThePark from "../../svg/AtThePark";
@@ -8,6 +8,8 @@ import AtThePark from "../../svg/AtThePark";
 import { Button } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 const WelcomeScreen = (props) => {
   const navigation = useNavigation();
@@ -24,14 +26,20 @@ const WelcomeScreen = (props) => {
       <View style={styles.secondRow}>
         <Text style={styles.welcomeText}>WELCOME!!!</Text>
         <Text style={styles.supportText}>A travel and tour application</Text>
-        <View style={styles.button}>
+        {/* <View style={styles.button}>
           <Button
             onPress={() => {
               navigation.navigate("SignUpScreen");
             }}
             title="Get Started!"
           ></Button>
-        </View>
+        </View> */}
+        <TouchableOpacity onPress={() => navigation.navigate("SignUpScreen")}>
+          <LinearGradient colors={["#08d4c4", "#01ab9d"]} style={styles.signIn}>
+            <Text style={styles.textSign}>Get Started</Text>
+            <MaterialIcons name="navigate-next" color="#fff" size={20} />
+          </LinearGradient>
+        </TouchableOpacity>
       </View>
       <View style={styles.thirdRow}>
         <View style={styles.circleContainerTwo}>
@@ -143,6 +151,22 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 30,
+  },
+  signIn: {
+    width: 150,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 50,
+    flexDirection: "row",
+    marginTop: 30,
+  },
+  textSign: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  lineGradient: {
+    color: Colors.primary,
   },
 });
 

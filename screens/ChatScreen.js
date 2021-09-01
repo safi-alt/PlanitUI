@@ -6,6 +6,8 @@ import { Header } from "react-native-elements";
 import { FontAwesome } from "@expo/vector-icons";
 import io from "socket.io-client";
 import { TouchableOpacity } from "react-native";
+import Colors from "../constants/Colors";
+
 const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
 
@@ -63,7 +65,7 @@ const ChatScreen = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Header
+      {/* <Header
         leftComponent={{
           icon: "menu",
           color: "#fff",
@@ -91,7 +93,7 @@ const ChatScreen = () => {
             </TouchableOpacity>
           </View>
         }
-      />
+      /> */}
       <GiftedChat
         messages={messages}
         showUserAvatar={true}

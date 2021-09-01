@@ -9,9 +9,11 @@ import {
   View,
 } from "react-native";
 import { Icon } from "react-native-elements/dist/icons/Icon";
+
 import { useSelector } from "react-redux";
 import tw from "tailwind-react-native-classnames";
 import { selectOrigin } from "../slices/navSlice";
+import Colors from "../constants/Colors";
 
 const data = [
   {
@@ -46,7 +48,7 @@ const NavOptions = () => {
             <Image style={styles.imageStyle} source={{ uri: item.image }} />
             <Text style={tw`mt-2 text-lg font-semibold`}>{item.title}</Text>
             <Icon
-              style={tw`p-2 bg-black rounded-full w-10 mt-4`}
+              style={[tw`p-2 bg-black rounded-full w-10 mt-4`, styles.icons]}
               color="white"
               name="arrowright"
               type="antdesign"
@@ -65,5 +67,8 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     resizeMode: "contain",
+  },
+  icons: {
+    backgroundColor: Colors.primary,
   },
 });
