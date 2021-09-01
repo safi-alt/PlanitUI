@@ -11,14 +11,28 @@ import NavFavourites from "../components/NavFavourites";
 import { Button } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const userInformation = useSelector(selectUser);
 
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@storage_Key");
+      if (value !== null) {
+        // value previously stored
+        console.log(value);
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
+
   useEffect(() => {
-    console.log(userInformation);
+    // console.log(userInformation);
+    getData();
   }, []);
   return (
     <SafeAreaView style={tw`bg-white h-full`}>

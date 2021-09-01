@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { View, Text, StyleSheet } from "react-native";
 
@@ -8,9 +8,25 @@ import AtThePark from "../../svg/AtThePark";
 import { Button } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const WelcomeScreen = (props) => {
   const navigation = useNavigation();
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@storage_Key");
+      if (value !== null) {
+        // value previously stored
+        console.log(value);
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
+  useEffect(() => {
+    // console.log(userInformation);
+    getData();
+  }, []);
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.firstRow}>

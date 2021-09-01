@@ -10,6 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { useDispatch } from "react-redux";
 import { setUser } from "../../slices/navSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignUpScreen = (props) => {
   const [isSignup, setIsSignup] = useState(false);
@@ -23,6 +24,14 @@ const SignUpScreen = (props) => {
   const [message, setMessage] = useState("");
 
   const dispatch = useDispatch();
+
+  const storeData = async (value) => {
+    try {
+      await AsyncStorage.setItem("@storage_Key", value);
+    } catch (e) {
+      // saving error
+    }
+  };
 
   const handleSubmit = async () => {
     const res = await fetch(`https://planit-fyp.herokuapp.com/api/users/`, {
@@ -74,7 +83,9 @@ const SignUpScreen = (props) => {
       }
     );
     const response = await res.json();
-    console.log(response);
+    // console.log(response);
+    storeData(response.name);
+
     if (response.token) {
       setToken(response.token);
       dispatch(
