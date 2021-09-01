@@ -2,6 +2,9 @@ import React from "react";
 import { StyleSheet, Text, SafeAreaView, View } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+// import { GOOGLE_MAPS_APIKEY } from "@env";
+// import { GOOGLE_MAPS_APIKEY } from "@env";
+//import { GOOGLE_MAPS_APIKEY } from "@env";
 import { GOOGLE_MAPS_APIKEY } from "@env";
 import { useDispatch } from "react-redux";
 import { setDestination } from "../slices/navSlice";
@@ -10,6 +13,7 @@ import NavFavourites from "./NavFavourites";
 import { TouchableOpacity } from "react-native";
 import { Icon } from "react-native-elements";
 import Colors from "../constants/Colors";
+import { KeyboardAvoidingView } from "react-native";
 
 const NavigateCard = () => {
   const dispatch = useDispatch();
@@ -19,32 +23,37 @@ const NavigateCard = () => {
     <SafeAreaView style={tw`bg-white flex-1`}>
       <Text style={tw`text-center py-5 text-xl`}>Good Morning, Safey</Text>
       <View style={tw`border-t border-gray-200 flex-shrink`}>
-        <View>
-          <GooglePlacesAutocomplete
-            placeholder="Where to?"
-            styles={styles}
-            fetchDetails={true}
-            enablePoweredByContainer={false}
-            minLength={2}
-            returnKeyType={"search"}
-            onPress={(data, details = null) => {
-              dispatch(
-                setDestination({
-                  location: details.geometry.location,
-                  description: data.description,
-                })
-              );
-              console.log("destination", details.geometry.location);
-              navigation.navigate("RideOptionsCard");
-            }}
-            query={{
-              key: GOOGLE_MAPS_APIKEY,
-              language: "en",
-            }}
-            nearbyPlacesAPI="GooglePlacesSearch"
-            debounce={400}
-          />
-        </View>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? -64 : 100}
+        >
+          <View>
+            <GooglePlacesAutocomplete
+              placeholder="Where to?"
+              styles={styles}
+              fetchDetails={true}
+              enablePoweredByContainer={false}
+              minLength={2}
+              returnKeyType={"search"}
+              onPress={(data, details = null) => {
+                dispatch(
+                  setDestination({
+                    location: details.geometry.location,
+                    description: data.description,
+                  })
+                );
+                console.log("destination", details.geometry.location);
+                navigation.navigate("RideOptionsCard");
+              }}
+              query={{
+                key: GOOGLE_MAPS_APIKEY,
+                language: "en",
+              }}
+              nearbyPlacesAPI="GooglePlacesSearch"
+              debounce={400}
+            />
+          </View>
+        </KeyboardAvoidingView>
         <NavFavourites />
       </View>
       <View
@@ -95,5 +104,8 @@ const styles = StyleSheet.create({
   textInputContainer: {
     paddingHorizontal: 20,
     paddingBottom: 0,
+  },
+  contain: {
+    flex: 1,
   },
 });

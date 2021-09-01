@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -19,12 +19,21 @@ import Animated from "react-native-reanimated";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Platform } from "react-native";
 import Colors from "../constants/Colors";
+import {
+  setOrigin,
+  setDestination,
+  selectUser,
+  setUser,
+} from "../slices/navSlice";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 // import ImagePicker from 'react-native-image-crop-picker';
 
 const EditProfileScreen = () => {
   // const [image, setImage] = useState('https://api.adorable.io/avatars/80/abott@adorable.png');
   const { colors } = useTheme();
+  const dispatch = useDispatch();
 
   // const takePhotoFromCamera = () => {
   //   ImagePicker.openCamera({
@@ -51,6 +60,74 @@ const EditProfileScreen = () => {
   //     this.bs.current.snapTo(1);
   //   });
   // }
+
+  const [name, setName] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [phone, setPhone] = React.useState("");
+  const [token, setToken] = React.useState("");
+  const [country, setCountry] = React.useState("");
+  const [city, setCity] = React.useState("");
+  // var token = "";
+  const [message, setMessage] = React.useState("");
+  const userInformation = useSelector(selectUser);
+
+  useEffect(() => {
+    // console.log(userInformation);
+    console.log(userInformation.id);
+  }, []);
+
+  const handleEdit = async (id) => {
+    console.log("edit pressed");
+    console.log(id);
+    const res = await fetch(
+      `https://planit-fyp.herokuapp.com/api/users/update/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          city,
+          country,
+        }),
+      }
+    );
+    const response = await res.json();
+    console.log(response);
+    //storeData(response.name);
+
+    if (response.token) {
+      setToken(response.token);
+      // userInformation.name = name;
+      // userInformation.phone = phone;
+      // userInformation.email = email;
+      // userInformation.city = city;
+      // userInformation.country = country;
+
+      dispatch(
+        setUser({
+          ...userInformation,
+          name: response.name,
+          phone: response.phone,
+          token: response.token,
+          email: response.email,
+          city: response.city,
+          country: response.country,
+          avatar: response.avatar,
+        })
+      );
+      alert("User Updated");
+      setName("");
+      setPhone("");
+      setEmail("");
+      setCity("");
+      setCountry("");
+    }
+  };
 
   const renderInner = () => (
     <View style={styles.panel}>
@@ -154,28 +231,18 @@ const EditProfileScreen = () => {
             </View>
           </TouchableOpacity>
           <Text style={{ marginTop: 10, fontSize: 18, fontWeight: "bold" }}>
-            John Doe
+            {userInformation.name}
           </Text>
         </View>
 
         <View style={styles.action}>
           <FontAwesome name="user-o" color={colors.text} size={20} />
           <TextInput
-            placeholder="First Name"
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            style={[
-              styles.textInput,
-              {
-                color: colors.text,
-              },
-            ]}
-          />
-        </View>
-        <View style={styles.action}>
-          <FontAwesome name="user-o" color={colors.text} size={20} />
-          <TextInput
             placeholder="Last Name"
+            value={name}
+            onChangeText={(name) => {
+              setName(name);
+            }}
             placeholderTextColor="#666666"
             autoCorrect={false}
             style={[
@@ -190,6 +257,10 @@ const EditProfileScreen = () => {
           <Feather name="phone" color={colors.text} size={20} />
           <TextInput
             placeholder="Phone"
+            value={phone}
+            onChangeText={(phone) => {
+              setPhone(phone);
+            }}
             placeholderTextColor="#666666"
             keyboardType="number-pad"
             autoCorrect={false}
@@ -205,6 +276,10 @@ const EditProfileScreen = () => {
           <FontAwesome name="envelope-o" color={colors.text} size={20} />
           <TextInput
             placeholder="Email"
+            value={email}
+            onChangeText={(email) => {
+              setEmail(email);
+            }}
             placeholderTextColor="#666666"
             keyboardType="email-address"
             autoCorrect={false}
@@ -220,6 +295,10 @@ const EditProfileScreen = () => {
           <FontAwesome name="globe" color={colors.text} size={20} />
           <TextInput
             placeholder="Country"
+            value={country}
+            onChangeText={(country) => {
+              setCountry(country);
+            }}
             placeholderTextColor="#666666"
             autoCorrect={false}
             style={[
@@ -234,6 +313,10 @@ const EditProfileScreen = () => {
           <Icon name="map-marker-outline" color={colors.text} size={20} />
           <TextInput
             placeholder="City"
+            value={city}
+            onChangeText={(city) => {
+              setCity(city);
+            }}
             placeholderTextColor="#666666"
             autoCorrect={false}
             style={[
@@ -244,7 +327,10 @@ const EditProfileScreen = () => {
             ]}
           />
         </View>
-        <TouchableOpacity style={styles.commandButton} onPress={() => {}}>
+        <TouchableOpacity
+          style={styles.commandButton}
+          onPress={() => handleEdit(userInformation.id)}
+        >
           <Text style={styles.panelButtonTitle}>Submit</Text>
         </TouchableOpacity>
       </Animated.View>

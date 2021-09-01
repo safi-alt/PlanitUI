@@ -9,6 +9,7 @@ import {
   selectOrigin,
   setTravelTimeInformation,
 } from "../slices/navSlice";
+// import { GOOGLE_MAPS_APIKEY } from "@env";
 import { GOOGLE_MAPS_APIKEY } from "@env";
 
 const Map = () => {

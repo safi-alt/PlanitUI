@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   Animated,
   Image,
@@ -32,12 +32,15 @@ import Colors from "../constants/Colors";
 import ProfileScreen from "./ProfileScreen";
 import EditProfileScreen from "./EditProfileScreen";
 import YourTripsScreen from "./YourTripsScreen";
+import { setOrigin, setDestination, selectUser } from "../slices/navSlice";
+import { useSelector } from "react-redux";
 
 const SideNavScreen = () => {
   const Stack = createStackNavigator();
   const [currentTab, setCurrentTab] = useState("Home");
   // To get the curretn Status of menu ...
   const [showMenu, setShowMenu] = useState(false);
+  const userInformation = useSelector(selectUser);
 
   // Animated Properties...
 
@@ -45,6 +48,12 @@ const SideNavScreen = () => {
   // Scale Intially must be One...
   const scaleValue = useRef(new Animated.Value(1)).current;
   const closeButtonOffset = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // console.log(userInformation);
+    console.log(userInformation);
+    console.log(userInformation.avatar);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -67,7 +76,7 @@ const SideNavScreen = () => {
             marginTop: 20,
           }}
         >
-          Jenna Ezarik
+          {userInformation.name}
         </Text>
 
         <TouchableOpacity>

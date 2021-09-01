@@ -12,6 +12,8 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
 import Colors from "../constants/Colors";
+import { setOrigin, setDestination, selectUser } from "../slices/navSlice";
+import { useSelector } from "react-redux";
 
 // import Share from 'react-native-share';
 
@@ -32,6 +34,7 @@ const ProfileScreen = () => {
   //     console.log('Error => ', error);
   //   }
   // };
+  const userInformation = useSelector(selectUser);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -53,7 +56,7 @@ const ProfileScreen = () => {
                 },
               ]}
             >
-              John Doe
+              {userInformation.name}
             </Title>
             <Caption style={styles.caption}>@j_doe</Caption>
           </View>
@@ -64,19 +67,19 @@ const ProfileScreen = () => {
         <View style={styles.row}>
           <Icon name="map-marker-radius" color={Colors.primary} size={20} />
           <Text style={{ color: "#777777", marginLeft: 20 }}>
-            Kolkata, India
+            {userInformation.city}, {userInformation.country}
           </Text>
         </View>
         <View style={styles.row}>
           <Icon name="phone" color={Colors.primary} size={20} />
           <Text style={{ color: "#777777", marginLeft: 20 }}>
-            +91-900000009
+            {userInformation.phone}
           </Text>
         </View>
         <View style={styles.row}>
           <Icon name="email" color={Colors.primary} size={20} />
           <Text style={{ color: "#777777", marginLeft: 20 }}>
-            john_doe@email.com
+            {userInformation.email}
           </Text>
         </View>
       </View>
@@ -96,7 +99,7 @@ const ProfileScreen = () => {
         </View>
         <View style={styles.infoBox}>
           <Title>12</Title>
-          <Caption>Orders</Caption>
+          <Caption>Trips</Caption>
         </View>
       </View>
 

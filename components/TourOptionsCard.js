@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView, Dimensions } from "react-native";
 import { StyleSheet, Text, View, Image } from "react-native";
 import { Avatar, Icon, ListItem } from "react-native-elements";
@@ -13,11 +13,26 @@ import { useNavigation } from "@react-navigation/native";
 import Colors from "../constants/Colors";
 const { width } = Dimensions.get("screen");
 import profile from "../assets/profile.png";
+import {
+  setOrigin,
+  setDestination,
+  selectUser,
+  selectGuide,
+} from "../slices/navSlice";
 
 const TourOptionsCard = () => {
   const Stack = createStackNavigator();
   const travelTimeInformation = useSelector(selectTravelTimeInformation);
   const navigation = useNavigation();
+  const guideInformation = useSelector(selectGuide);
+
+  useEffect(() => {
+    // console.log(userInformation);
+    console.log(guideInformation);
+    console.log("Hello");
+    // console.log(userInformation.avatar);
+  }, []);
+
   return (
     <SafeAreaView style={tw`bg-white flex-grow`}>
       <View>
@@ -70,7 +85,10 @@ const TourOptionsCard = () => {
 
           {/* Location text */}
           <Text style={{ fontSize: 16, color: Colors.primary }}>
-            guide details
+            Name: {guideInformation.guideName}
+          </Text>
+          <Text style={{ fontSize: 16, color: Colors.primary }}>
+            Phone: {guideInformation.guidePhone}
           </Text>
 
           {/* Facilities container */}
@@ -89,7 +107,6 @@ const TourOptionsCard = () => {
             </View>
           </View>
         </View>
-        <Text style={{ marginTop: 20, color: Colors.primary }}>Guide name</Text>
 
         {/* Interior list */}
         {/* <FlatList
