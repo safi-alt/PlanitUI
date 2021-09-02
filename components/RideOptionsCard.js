@@ -18,9 +18,13 @@ import {
   selectUser,
   selectTripCost,
   setGuide,
+  setGuideLocation,
+  selectGuideLocation,
+  setStartTrip,
 } from "../slices/navSlice";
 import { useDispatch } from "react-redux";
 import io from "socket.io-client";
+import Loader from "./Loader";
 
 const data = [
   {
@@ -66,6 +70,8 @@ const RideOptionsCard = () => {
   const [phone, setPhone] = useState("");
   const dispatch = useDispatch();
   const [guideFound, setGuideFound] = useState(false);
+  const guideLocation = useSelector(selectGuideLocation);
+  const [val, setVal] = useState(false);
 
   let cost = "1000Rs";
 
@@ -75,6 +81,7 @@ const RideOptionsCard = () => {
     socket = io("https://planit-fyp.herokuapp.com");
     socket.on("guide details", (detail) => {
       // console.log(detail);
+      setVal(false);
       dispatch(
         setGuide({
           guideName: detail.name,
@@ -87,6 +94,28 @@ const RideOptionsCard = () => {
       // setDriver(detail.driver);
       // setMessage(detail.message);
     });
+
+    socket.on("guide Location", (location) => {
+      //console.log(location);
+      dispatch(
+        setGuideLocation({
+          ...guideLocation,
+          guideLatitude: location.latitude,
+          guideLongitude: location.longitude,
+        })
+      );
+    });
+
+    socket.on("final Posiiton", (location) => {
+      dispatch(
+        setGuideLocation({
+          ...guideLocation,
+          guideLatitude: false,
+          guideLongitude: false,
+        })
+      );
+    });
+
     //   }, []);
     console.log(userInformation);
     console.log(originInformation);
@@ -94,6 +123,7 @@ const RideOptionsCard = () => {
   }, [destinationInformation]);
 
   const handleSubmitOrder = async () => {
+    setVal(true);
     const res = await fetch(`https://planit-fyp.herokuapp.com/api/orders/`, {
       method: "POST",
       headers: {
@@ -128,7 +158,9 @@ const RideOptionsCard = () => {
     // });
   };
 
-  return (
+  return val ? (
+    <Loader />
+  ) : (
     <SafeAreaView style={tw`bg-white flex-grow`}>
       <View>
         <TouchableOpacity

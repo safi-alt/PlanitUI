@@ -1,20 +1,24 @@
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
+// import MapView, { Marker } from "react-native-maps";
 import MapView, { Marker } from "react-native-maps";
+// import MapViewDirections from "react-native-maps-directions";
+// import MapViewDirections from "react-native-maps-directions";
 import MapViewDirections from "react-native-maps-directions";
 import { useSelector, useDispatch } from "react-redux";
 import tw from "tailwind-react-native-classnames";
 import {
   selectDestination,
+  selectGuideLocation,
   selectOrigin,
   setTravelTimeInformation,
 } from "../slices/navSlice";
-// import { GOOGLE_MAPS_APIKEY } from "@env";
 import { GOOGLE_MAPS_APIKEY } from "@env";
 
 const Map = () => {
   const origin = useSelector(selectOrigin);
   const destination = useSelector(selectDestination);
+  const guideLocation = useSelector(selectGuideLocation);
   const mapRef = useRef();
   const dispatch = useDispatch();
 
@@ -27,6 +31,8 @@ const Map = () => {
   }, [origin, destination]);
 
   useEffect(() => {
+    console.log(guideLocation);
+    //console.log(destination.description);
     if (!origin || !destination) return;
     const getTravelTime = async () => {
       fetch(
@@ -34,12 +40,12 @@ const Map = () => {
       )
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
+          // console.log(data);
           dispatch(setTravelTimeInformation(data.rows[0].elements[0]));
         });
     };
     getTravelTime();
-  }, [origin, destination, GOOGLE_MAPS_APIKEY]);
+  }, [origin, destination, GOOGLE_MAPS_APIKEY, guideLocation]);
 
   return (
     <MapView
@@ -56,7 +62,14 @@ const Map = () => {
       {origin && destination && (
         <MapViewDirections
           origin={origin.description}
-          destination={destination.description}
+          destination={{
+            latitude: guideLocation?.guideLatitude
+              ? guideLocation.guideLatitude
+              : destination.location.lat,
+            longitude: guideLocation?.guideLongitude
+              ? guideLocation.guideLongitude
+              : destination.location.lng,
+          }}
           apikey={GOOGLE_MAPS_APIKEY}
           strokeColor="green"
           strokeWidth={3}
@@ -74,11 +87,16 @@ const Map = () => {
           identifier="origin"
         />
       )}
+
       {destination?.location && (
         <Marker
           coordinate={{
-            latitude: destination.location.lat,
-            longitude: destination.location.lng,
+            latitude: guideLocation?.guideLatitude
+              ? guideLocation.guideLatitude
+              : destination.location.lat,
+            longitude: guideLocation?.guideLongitude
+              ? guideLocation.guideLongitude
+              : destination.location.lng,
           }}
           title="Destination"
           description={destination.description}

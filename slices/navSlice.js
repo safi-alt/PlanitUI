@@ -6,6 +6,8 @@ const initialState = {
   travelTimeInformation: null,
   user: null,
   guide: null,
+  guideLocation: null,
+  startTrip: null,
 };
 
 export const navSlice = createSlice({
@@ -27,6 +29,12 @@ export const navSlice = createSlice({
     setGuide: (state, action) => {
       state.guide = action.payload;
     },
+    setGuideLocation: (state, action) => {
+      state.guideLocation = action.payload;
+    },
+    setStartTrip: (state, action) => {
+      state.startTrip = action.payload;
+    },
   },
 });
 
@@ -36,6 +44,8 @@ export const {
   setTravelTimeInformation,
   setUser,
   setGuide,
+  setGuideLocation,
+  setStartTrip,
 } = navSlice.actions;
 
 // Slectors
@@ -46,5 +56,7 @@ export const selectTravelTimeInformation = (state) =>
   state.nav.travelTimeInformation;
 export const selectUser = (state) => state.nav.user;
 export const selectGuide = (state) => state.nav.guide;
+export const selectGuideLocation = (state) => state.nav.guideLocation;
+export const selectStartTrip = (state) => state.nav.startTrip;
 
 export default navSlice.reducer;
