@@ -52,14 +52,14 @@ const SideNavScreen = () => {
   useEffect(() => {
     // console.log(userInformation);
     console.log(userInformation);
-    console.log(userInformation.avatar);
+    console.log(typeof userInformation.avatar);
   }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ justifyContent: "flex-start", padding: 15 }}>
         <Image
-          source={profile}
+          source={{ uri: userInformation.avatar }}
           style={{
             width: 60,
             height: 60,

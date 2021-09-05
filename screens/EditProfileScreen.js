@@ -27,6 +27,8 @@ import {
 } from "../slices/navSlice";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import * as ImagePicker from "expo-image-picker";
+import { Image } from "react-native";
 
 // import ImagePicker from 'react-native-image-crop-picker';
 
@@ -60,29 +62,60 @@ const EditProfileScreen = () => {
   //     this.bs.current.snapTo(1);
   //   });
   // }
-
-  const [name, setName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [phone, setPhone] = React.useState("");
+  const userInformation = useSelector(selectUser);
+  const [name, setName] = React.useState(userInformation.name);
+  const [email, setEmail] = React.useState(userInformation.email);
+  const [phone, setPhone] = React.useState(userInformation.phone);
   const [token, setToken] = React.useState("");
-  const [country, setCountry] = React.useState("");
-  const [city, setCity] = React.useState("");
+  const [country, setCountry] = React.useState(userInformation.country);
+  const [city, setCity] = React.useState(userInformation.city);
+  const [avatar, setAvatar] = useState("");
   // var token = "";
   const [message, setMessage] = React.useState("");
-  const userInformation = useSelector(selectUser);
 
   useEffect(() => {
     // console.log(userInformation);
     console.log(userInformation.id);
   }, []);
+  const [image, setImage] = useState(userInformation.avatar);
+  const addImage = async () => {
+    let _image = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    console.log(JSON.stringify(_image));
+
+    if (!_image.cancelled) {
+      setImage(_image.uri);
+      setAvatar(_image.uri);
+    }
+  };
+
+  const takeImage = async () => {
+    let _image = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    console.log(JSON.stringify(_image));
+
+    if (!_image.cancelled) {
+      setImage(_image.uri);
+      setAvatar(_image.uri);
+    }
+  };
 
   const handleEdit = async (id) => {
     console.log("edit pressed");
     console.log(id);
+
     const res = await fetch(
       `https://planit-fyp.herokuapp.com/api/users/update/${id}`,
       {
-        method: "PUT",
+        method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -93,6 +126,7 @@ const EditProfileScreen = () => {
           phone,
           city,
           country,
+          avatar,
         }),
       }
     );
@@ -126,6 +160,7 @@ const EditProfileScreen = () => {
       setEmail("");
       setCity("");
       setCountry("");
+      setAvatar("");
     }
   };
 
@@ -135,10 +170,10 @@ const EditProfileScreen = () => {
         <Text style={styles.panelTitle}>Upload Photo</Text>
         <Text style={styles.panelSubtitle}>Choose Your Profile Picture</Text>
       </View>
-      <TouchableOpacity style={styles.panelButton} onPress={() => {}}>
+      <TouchableOpacity style={styles.panelButton} onPress={takeImage}>
         <Text style={styles.panelButtonTitle}>Take Photo</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.panelButton} onPress={() => {}}>
+      <TouchableOpacity style={styles.panelButton} onPress={addImage}>
         <Text style={styles.panelButtonTitle}>Choose From Library</Text>
       </TouchableOpacity>
       {Platform.OS === "android" ? (
@@ -191,8 +226,8 @@ const EditProfileScreen = () => {
           <TouchableOpacity onPress={() => bs.current.snapTo(0)}>
             <View
               style={{
-                height: 100,
-                width: 100,
+                height: 200,
+                width: 200,
                 borderRadius: 15,
                 justifyContent: "center",
                 alignItems: "center",
@@ -212,7 +247,7 @@ const EditProfileScreen = () => {
                     alignItems: "center",
                   }}
                 >
-                  <Icon
+                  {/* <Icon
                     name="camera"
                     size={35}
                     color="#fff"
@@ -225,7 +260,17 @@ const EditProfileScreen = () => {
                       borderRadius: 10,
                       backgroundColor: "black",
                     }}
-                  />
+                  /> */}
+                  <View style={styles.imageStyle}>
+                    {image && (
+                      <Image
+                        source={{
+                          uri: image,
+                        }}
+                        style={{ width: 200, height: 200 }}
+                      />
+                    )}
+                  </View>
                 </View>
               </ImageBackground>
             </View>
@@ -341,6 +386,15 @@ const EditProfileScreen = () => {
 export default EditProfileScreen;
 
 const styles = StyleSheet.create({
+  imageStyle: {
+    elevation: 2,
+    height: 200,
+    width: 200,
+    backgroundColor: "#efefef",
+    position: "relative",
+    borderRadius: 999,
+    overflow: "hidden",
+  },
   container: {
     flex: 1,
     backgroundColor: "white",

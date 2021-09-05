@@ -35,6 +35,10 @@ const ProfileScreen = () => {
   //   }
   // };
   const userInformation = useSelector(selectUser);
+  const [image, setImage] = React.useState(userInformation.avatar);
+  React.useEffect(() => {
+    setImage(userInformation.avatar);
+  }, [userInformation]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -42,7 +46,7 @@ const ProfileScreen = () => {
         <View style={{ flexDirection: "row", marginTop: 15 }}>
           <Avatar.Image
             source={{
-              uri: "https://api.adorable.io/avatars/80/abott@adorable.png",
+              uri: image,
             }}
             size={80}
           />

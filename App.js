@@ -24,6 +24,7 @@ import SideNavScreen from "./screens/SideNavScreen";
 import SplashScreen from "./screens/StartingScreens/SplashScreen";
 import SignInScreen from "./screens/StartingScreens/SignInScreen";
 import Communication from "./components/Communication";
+import PushNotifications from "./screens/PushNotifications";
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -67,6 +68,13 @@ export default function App() {
               {/* <Stack.Screen
                 name="SplashScreen"
                 component={SplashScreen}
+                options={{
+                  headerShown: false,
+                }}
+              /> */}
+              {/* <Stack.Screen
+                name="UploadImage"
+                component={UploadImage}
                 options={{
                   headerShown: false,
                 }}
@@ -124,6 +132,13 @@ export default function App() {
               <Stack.Screen
                 name="SideNavScreen"
                 component={SideNavScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="PushNotifications"
+                component={PushNotifications}
                 options={{
                   headerShown: false,
                 }}

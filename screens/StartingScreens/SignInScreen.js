@@ -154,7 +154,8 @@ const SignInScreen = ({ navigation }) => {
           avatar: response.avatar,
         })
       );
-      navigation.navigate("SideNavScreen");
+       navigation.navigate("SideNavScreen");
+     // navigation.navigate("PushNotifications");
 
       setEmail("");
       setPassword("");
