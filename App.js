@@ -24,6 +24,9 @@ import SideNavScreen from "./screens/SideNavScreen";
 import SplashScreen from "./screens/StartingScreens/SplashScreen";
 import SignInScreen from "./screens/StartingScreens/SignInScreen";
 import Communication from "./components/Communication";
+import PreBookScreen from "./screens/PreBookScreen";
+import PreBookMapScreen from "./screens/PreBookMapScreen";
+import PopScreen from "./screens/PopScreen";
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -138,6 +141,27 @@ export default function App() {
               <Stack.Screen
                 name="MapScreen"
                 component={MapScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="PreBookScreen"
+                component={PreBookScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="PreBookMapScreen"
+                component={PreBookMapScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="PopScreen"
+                component={PopScreen}
                 options={{
                   headerShown: false,
                 }}
