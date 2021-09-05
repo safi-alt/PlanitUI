@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity as TouchableOpacitys,
   ImageBackground,
+  Image,
   TextInput,
   StyleSheet,
 } from "react-native";
@@ -19,38 +20,75 @@ import Animated from "react-native-reanimated";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Platform } from "react-native";
 import Colors from "../constants/Colors";
+import * as ImagePicker from "expo-image-picker";
+import * as Permissions from "expo-permissions";
+import { Button } from "react-native";
+import { Pressable } from "react-native";
 
 // import ImagePicker from 'react-native-image-crop-picker';
 
 const EditProfileScreen = () => {
-  // const [image, setImage] = useState('https://api.adorable.io/avatars/80/abott@adorable.png');
   const { colors } = useTheme();
+  const [image, setImage] = useState(null);
+
+  askPermissionsAsync = async () => {
+    await Permissions.askAsync(Permissions.CAMERA);
+    await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
+  };
+
+  const pickerImage = async () => {
+    await this.askPermissionsAsync();
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+    });
+
+    console.log("result:", result);
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+  };
+
+  const takeImage = async () => {
+    await this.askPermissionsAsync();
+    let _image = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    console.log(JSON.stringify(_image));
+
+    if (!_image.cancelled) {
+      setImage(_image.uri);
+    }
+  };
 
   // const takePhotoFromCamera = () => {
   //   ImagePicker.openCamera({
   //     compressImageMaxWidth: 300,
   //     compressImageMaxHeight: 300,
   //     cropping: true,
-  //     compressImageQuality: 0.7
-  //   }).then(image => {
+  //     compressImageQuality: 0.7,
+  //   }).then((image) => {
   //     console.log(image);
   //     setImage(image.path);
   //     this.bs.current.snapTo(1);
   //   });
-  // }
+  // };
 
   // const choosePhotoFromLibrary = () => {
   //   ImagePicker.openPicker({
   //     width: 300,
   //     height: 300,
   //     cropping: true,
-  //     compressImageQuality: 0.7
-  //   }).then(image => {
+  //     compressImageQuality: 0.7,
+  //   }).then((image) => {
   //     console.log(image);
   //     setImage(image.path);
   //     this.bs.current.snapTo(1);
   //   });
-  // }
+  // };
 
   const renderInner = () => (
     <View style={styles.panel}>
@@ -58,12 +96,12 @@ const EditProfileScreen = () => {
         <Text style={styles.panelTitle}>Upload Photo</Text>
         <Text style={styles.panelSubtitle}>Choose Your Profile Picture</Text>
       </View>
-      <TouchableOpacity style={styles.panelButton} onPress={() => {}}>
+      <Pressable style={styles.panelButton} onPress={takeImage}>
         <Text style={styles.panelButtonTitle}>Take Photo</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.panelButton} onPress={() => {}}>
+      </Pressable>
+      <Pressable style={styles.panelButton} onPress={pickerImage}>
         <Text style={styles.panelButtonTitle}>Choose From Library</Text>
-      </TouchableOpacity>
+      </Pressable>
       {Platform.OS === "android" ? (
         <TouchableOpacity
           style={styles.panelButton}
@@ -123,7 +161,7 @@ const EditProfileScreen = () => {
             >
               <ImageBackground
                 source={{
-                  uri: "https://api.adorable.io/avatars/80/abott@adorable.png",
+                  uri: image,
                 }}
                 style={{ height: 100, width: 100 }}
                 imageStyle={{ borderRadius: 15 }}
@@ -146,7 +184,7 @@ const EditProfileScreen = () => {
                       borderWidth: 1,
                       borderColor: "#fff",
                       borderRadius: 10,
-                      backgroundColor: "black",
+                      backgroundColor: "gray",
                     }}
                   />
                 </View>

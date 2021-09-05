@@ -19,13 +19,13 @@ const data = [
   {
     id: "123",
     title: "Book A Guide",
-    image: "https://links.papareact.com/3pn",
+    image: "../assets/iconBook..png",
     screen: "MapScreen",
   },
   {
     id: "456",
     title: "PreBook Guide",
-    image: "https://links.papareact.com/28w",
+    image: "../assets/iconPreBook..png",
     screen: "PreBookScreen",
   },
 ];
@@ -45,7 +45,14 @@ const NavOptions = () => {
           disabled={!origin}
         >
           <View style={tw`${!origin && "opacity-20"}`}>
-            <Image style={styles.imageStyle} source={{ uri: item.image }} />
+            <Image
+              style={styles.imageStyle}
+              source={
+                item?.screen === "MapScreen"
+                  ? require("../assets/iconBook.png")
+                  : require("../assets/iconPreBook.png")
+              }
+            />
             <Text style={tw`mt-2 text-lg font-semibold`}>{item.title}</Text>
             <Icon
               style={[tw`p-2 bg-black rounded-full w-10 mt-4`, styles.icons]}

@@ -12,25 +12,26 @@ import { selectTravelTimeInformation } from "../slices/navSlice";
 import "intl";
 import { Platform } from "react-native";
 import "intl/locale-data/jsonp/en";
+import Colors from "../constants/Colors";
 
 const data = [
   {
     id: "Uber-X-123",
-    title: "UberX",
+    title: "Sight Seening",
     multiplier: 1,
-    image: "https://links.papareact.com/3pn",
+    image: "https://img.icons8.com/officel/80/26e07f/tourist-male.png",
   },
   {
     id: "Uber-XL-456",
-    title: "Uber XL",
+    title: "Adventure",
     multiplier: 1.2,
-    image: "https://links.papareact.com/5w8",
+    image: "https://img.icons8.com/color/48/26e07f/tour-guide-skin-type-2.png",
   },
   {
     id: "Uber-LUX-789",
-    title: "Uber LUX",
+    title: "Mysterious",
     multiplier: 1.75,
-    image: "https://links.papareact.com/7pf",
+    image: "https://img.icons8.com/color/48/26e07f/trekking.png",
   },
 ];
 
@@ -112,7 +113,10 @@ const RideOptionsCard = () => {
         <TouchableOpacity
           onPress={() => navigation.navigate("TourOptionsCard")}
           disabled={!selected}
-          style={tw`bg-black py-3 m-3 ${!selected && "bg-gray-300"}`}
+          style={[
+            tw`bg-black py-3 m-3 ${!selected && "bg-gray-300"}`,
+            { backgroundColor: Colors.primary },
+          ]}
         >
           <Text style={tw`text-center text-white text-xl`}>
             Choose {selected?.title}
