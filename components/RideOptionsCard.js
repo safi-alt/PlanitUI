@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native";
 import { StyleSheet, Text, View } from "react-native";
@@ -8,11 +8,23 @@ import { useNavigation } from "@react-navigation/native";
 import { FlatList } from "react-native";
 import { Image } from "react-native";
 import { useSelector } from "react-redux";
-import { selectTravelTimeInformation } from "../slices/navSlice";
 import "intl";
 import { Platform } from "react-native";
 import "intl/locale-data/jsonp/en";
 import Colors from "../constants/Colors";
+import {
+  selectTravelTimeInformation,
+  selectOrigin,
+  selectDestination,
+  selectUser,
+  selectTripCost,
+  setGuide,
+  setGuideLocation,
+  selectGuideLocation,
+  setStartTrip,
+} from "../slices/navSlice";
+import { useDispatch } from "react-redux";
+import io from "socket.io-client";
 
 const data = [
   {
@@ -46,7 +58,114 @@ const hourRate = 2000;
 const RideOptionsCard = () => {
   const navigation = useNavigation();
   const [selected, setSelected] = useState(null);
+  let cost = [];
+  const [duration, setDuration] = useState("");
   const travelTimeInformation = useSelector(selectTravelTimeInformation);
+  const userInformation = useSelector(selectUser);
+  const originInformation = useSelector(selectOrigin);
+  const destinationInformation = useSelector(selectDestination);
+  const [name, setName] = useState("");
+  const [originlatitude, setOriginLatitude] = useState("");
+  const [originLongitude, setOriginLongitude] = useState("");
+  const [destLatitude, setDestLatitude] = useState("");
+  const [destLongitude, setDestLongitude] = useState("");
+  const [phone, setPhone] = useState("");
+  const dispatch = useDispatch();
+  const [guideFound, setGuideFound] = useState(false);
+  const guideLocation = useSelector(selectGuideLocation);
+  const [val, setVal] = useState(false);
+
+  let socket = io("https://planit-fyp.herokuapp.com");
+
+  useEffect(() => {
+    // console.log(travelTimeInformation);
+    setDuration(travelTimeInformation?.duration?.text);
+    socket.on("guide details", (detail) => {
+      // console.log(detail);
+      setVal(false);
+      dispatch(
+        setGuide({
+          guideName: detail.name,
+          guidePhone: detail.phone,
+        })
+      );
+      // alert(`Guide:${detail.name},Phone:${detail.phone}`);
+      navigation.navigate("TourOptionsCard");
+      // setCnic(detail.cnic);
+      // setDriver(detail.driver);
+      // setMessage(detail.message);
+    });
+
+    socket.on("guide Location", (location) => {
+      //console.log(location);
+      dispatch(
+        setGuideLocation({
+          ...guideLocation,
+          guideLatitude: location.latitude,
+          guideLongitude: location.longitude,
+        })
+      );
+    });
+
+    socket.on("final Posiiton", (location) => {
+      dispatch(
+        setGuideLocation({
+          ...guideLocation,
+          guideLatitude: false,
+          guideLongitude: false,
+        })
+      );
+    });
+
+    //   }, []);
+    // console.log(userInformation);
+    // console.log(originInformation);
+    // console.log(destinationInformation);
+  }, [destinationInformation, travelTimeInformation]);
+
+  const handleSubmitOrder = async () => {
+    setVal(true);
+    var finalCost = cost.filter((x) => x.id === selected.id).map((x) => x.pay);
+    //console.log(finalCost[0]);
+    // console.log();
+    //console.log(cost);
+    // console.log(duration);
+    //console.log(travelTimeInformation);
+    const res = await fetch(`https://planit-fyp.herokuapp.com/api/orders/`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user: userInformation.id,
+        name: userInformation.name,
+        phone: userInformation.phone,
+        cost: finalCost[0],
+        duration,
+        origin: originInformation.description,
+        destination: destinationInformation.description,
+        originlatitude: originInformation.location.lat,
+        originLongitude: originInformation.location.lng,
+        destLatitude: destinationInformation.location.lat,
+        destLongitude: destinationInformation.location.lng,
+        category: "Live",
+      }),
+    });
+    const response = await res.json();
+    //console.log(response);
+    socket.emit("order details", response);
+    // socket.emit("order details", {
+    //   Name: response.data.name,
+    //   Phone: response.data.phone,
+    //   Origin: response.data.origin,
+    //   Destination: response.data.destination,
+    //   OriginLatitude: response.data.originlatitude,
+    //   OriginLongitude: response.data.originLongitude,
+    //   DestLatitude: response.data.destLatitude,
+    //   DestLongitude: response.data.destLongitude,
+    // });
+  };
 
   return (
     <SafeAreaView style={tw`bg-white flex-grow`}>
@@ -105,13 +224,27 @@ const RideOptionsCard = () => {
                   multiplier) /
                   10
               )}
+              {cost.push({
+                id: id,
+                pay: new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "PKR",
+                }).format(
+                  (travelTimeInformation?.duration.value *
+                    SURGE_CHARGE_RATE *
+                    multiplier) /
+                    10
+                ),
+              })}
             </Text>
           </TouchableOpacity>
         )}
       />
       <View style={tw`mt-auto border-t border-gray-200`}>
         <TouchableOpacity
-          onPress={() => navigation.navigate("TourOptionsCard")}
+          onPress={() => {
+            handleSubmitOrder();
+          }}
           disabled={!selected}
           style={[
             tw`bg-black py-3 m-3 ${!selected && "bg-gray-300"}`,

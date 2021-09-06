@@ -18,6 +18,8 @@ import { useTheme } from "react-native-paper";
 
 import { LinearGradient } from "expo-linear-gradient";
 import Colors from "../../constants/Colors";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../slices/navSlice";
 
 // import { AuthContext } from "../components/context";
 
@@ -32,9 +34,13 @@ const SignInScreen = ({ navigation }) => {
     isValidUser: true,
     isValidPassword: true,
   });
+  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [token, setToken] = React.useState("");
 
   const { colors } = useTheme();
 
+  const dispatch = useDispatch();
   //   const { signIn } = React.useContext(AuthContext);
 
   const textInputChange = (val) => {
@@ -115,6 +121,49 @@ const SignInScreen = ({ navigation }) => {
     signIn(foundUser);
   };
 
+  const handleLogin = async () => {
+    const res = await fetch(
+      `https://planit-fyp.herokuapp.com/api/users/login`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      }
+    );
+    const response = await res.json();
+    // console.log(response);
+    //storeData(response.name);
+
+    if (response.token) {
+      setToken(response.token);
+      dispatch(
+        setUser({
+          name: response.name,
+          phone: response.phone,
+          token: response.token,
+          email: response.email,
+          id: response.id,
+          city: response.city,
+          country: response.country,
+          avatar: response.avatar,
+        })
+      );
+       navigation.navigate("SideNavScreen");
+     // navigation.navigate("PushNotifications");
+
+      setEmail("");
+      setPassword("");
+    } else {
+      alert(`Error:${response.message}`);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* <StatusBar backgroundColor={Colors.primary} barStyle="light-content" /> */}
@@ -138,12 +187,12 @@ const SignInScreen = ({ navigation }) => {
             },
           ]}
         >
-          Username
+          Email
         </Text>
         <View style={styles.action}>
           <FontAwesome name="user-o" color={colors.text} size={20} />
           <TextInput
-            placeholder="Your Username"
+            placeholder="Your Email"
             placeholderTextColor="#666666"
             style={[
               styles.textInput,
@@ -152,7 +201,11 @@ const SignInScreen = ({ navigation }) => {
               },
             ]}
             autoCapitalize="none"
-            onChangeText={(val) => textInputChange(val)}
+            value={email}
+            onChangeText={(email) => {
+              textInputChange(email);
+              setEmail(email);
+            }}
             onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
           />
           {data.check_textInputChange ? (
@@ -193,7 +246,11 @@ const SignInScreen = ({ navigation }) => {
               },
             ]}
             autoCapitalize="none"
-            onChangeText={(val) => handlePasswordChange(val)}
+            value={password}
+            onChangeText={(password) => {
+              handlePasswordChange(password);
+              setPassword(password);
+            }}
           />
           <TouchableOpacity onPress={updateSecureTextEntry}>
             {data.secureTextEntry ? (
@@ -220,7 +277,7 @@ const SignInScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.signIn}
             onPress={() => {
-              navigation.navigate("SideNavScreen");
+              handleLogin();
             }}
           >
             <LinearGradient

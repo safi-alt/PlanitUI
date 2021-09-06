@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   Animated,
   Image,
@@ -32,12 +32,19 @@ import Colors from "../constants/Colors";
 import ProfileScreen from "./ProfileScreen";
 import EditProfileScreen from "./EditProfileScreen";
 import YourTripsScreen from "./YourTripsScreen";
+import { setOrigin, setDestination, selectUser } from "../slices/navSlice";
+import { useSelector } from "react-redux";
+import payments from "../assets/paymentInfo.png";
+import preBookTrips from "../assets/preBookTrips.png";
+import Payments from "./Payments";
+import PreBookNavigator from "./PreBookNavigator";
 
 const SideNavScreen = () => {
   const Stack = createStackNavigator();
   const [currentTab, setCurrentTab] = useState("Home");
   // To get the curretn Status of menu ...
   const [showMenu, setShowMenu] = useState(false);
+  const userInformation = useSelector(selectUser);
 
   // Animated Properties...
 
@@ -46,11 +53,17 @@ const SideNavScreen = () => {
   const scaleValue = useRef(new Animated.Value(1)).current;
   const closeButtonOffset = useRef(new Animated.Value(0)).current;
 
+  useEffect(() => {
+    // console.log(userInformation);
+    console.log(userInformation);
+    console.log(typeof userInformation.avatar);
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ justifyContent: "flex-start", padding: 15 }}>
         <Image
-          source={profile}
+          source={{ uri: userInformation.avatar }}
           style={{
             width: 60,
             height: 60,
@@ -67,7 +80,7 @@ const SideNavScreen = () => {
             marginTop: 20,
           }}
         >
-          Jenna Ezarik
+          {userInformation.name}
         </Text>
 
         <TouchableOpacity>
@@ -113,6 +126,20 @@ const SideNavScreen = () => {
             nav={"YourTripsScreen"}
             title={"Your Trips"}
             image={notifications}
+          />
+          <TabButtton
+            currentTab={currentTab}
+            setCurrentTab={setCurrentTab}
+            nav={"Payments"}
+            title={"Payments"}
+            image={payments}
+          />
+          <TabButtton
+            currentTab={currentTab}
+            setCurrentTab={setCurrentTab}
+            nav={"PreBookTrips"}
+            title={"Pre Book Trip"}
+            image={preBookTrips}
           />
         </View>
 
@@ -224,6 +251,20 @@ const SideNavScreen = () => {
               <Stack.Screen
                 name="YourTripsScreen"
                 component={YourTripsScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Payments"
+                component={Payments}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="PreBookTrips"
+                component={PreBookNavigator}
                 options={{
                   headerShown: false,
                 }}

@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   TouchableOpacity as TouchableOpacitys,
   ImageBackground,
-  Image,
   TextInput,
   StyleSheet,
 } from "react-native";
@@ -20,37 +19,81 @@ import Animated from "react-native-reanimated";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Platform } from "react-native";
 import Colors from "../constants/Colors";
+import {
+  setOrigin,
+  setDestination,
+  selectUser,
+  setUser,
+} from "../slices/navSlice";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import * as ImagePicker from "expo-image-picker";
-import * as Permissions from "expo-permissions";
-import { Button } from "react-native";
-import { Pressable } from "react-native";
+import { Image } from "react-native";
 
 // import ImagePicker from 'react-native-image-crop-picker';
 
 const EditProfileScreen = () => {
+  // const [image, setImage] = useState('https://api.adorable.io/avatars/80/abott@adorable.png');
   const { colors } = useTheme();
-  const [image, setImage] = useState(null);
+  const dispatch = useDispatch();
 
-  askPermissionsAsync = async () => {
-    await Permissions.askAsync(Permissions.CAMERA);
-    await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
-  };
+  // const takePhotoFromCamera = () => {
+  //   ImagePicker.openCamera({
+  //     compressImageMaxWidth: 300,
+  //     compressImageMaxHeight: 300,
+  //     cropping: true,
+  //     compressImageQuality: 0.7
+  //   }).then(image => {
+  //     console.log(image);
+  //     setImage(image.path);
+  //     this.bs.current.snapTo(1);
+  //   });
+  // }
 
-  const pickerImage = async () => {
-    await this.askPermissionsAsync();
-    let result = await ImagePicker.launchImageLibraryAsync({
+  // const choosePhotoFromLibrary = () => {
+  //   ImagePicker.openPicker({
+  //     width: 300,
+  //     height: 300,
+  //     cropping: true,
+  //     compressImageQuality: 0.7
+  //   }).then(image => {
+  //     console.log(image);
+  //     setImage(image.path);
+  //     this.bs.current.snapTo(1);
+  //   });
+  // }
+  const userInformation = useSelector(selectUser);
+  const [name, setName] = React.useState(userInformation.name);
+  const [email, setEmail] = React.useState(userInformation.email);
+  const [phone, setPhone] = React.useState(userInformation.phone);
+  const [token, setToken] = React.useState("");
+  const [country, setCountry] = React.useState(userInformation.country);
+  const [city, setCity] = React.useState(userInformation.city);
+  const [avatar, setAvatar] = useState("");
+  // var token = "";
+  const [message, setMessage] = React.useState("");
+
+  useEffect(() => {
+    // console.log(userInformation);
+    console.log(userInformation.id);
+  }, []);
+  const [image, setImage] = useState(userInformation.avatar);
+  const addImage = async () => {
+    let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
     });
+    console.log(JSON.stringify(_image));
 
-    console.log("result:", result);
-    if (!result.cancelled) {
-      setImage(result.uri);
+    if (!_image.cancelled) {
+      setImage(_image.uri);
+      setAvatar(_image.uri);
     }
   };
 
   const takeImage = async () => {
-    await this.askPermissionsAsync();
     let _image = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -61,34 +104,65 @@ const EditProfileScreen = () => {
 
     if (!_image.cancelled) {
       setImage(_image.uri);
+      setAvatar(_image.uri);
     }
   };
 
-  // const takePhotoFromCamera = () => {
-  //   ImagePicker.openCamera({
-  //     compressImageMaxWidth: 300,
-  //     compressImageMaxHeight: 300,
-  //     cropping: true,
-  //     compressImageQuality: 0.7,
-  //   }).then((image) => {
-  //     console.log(image);
-  //     setImage(image.path);
-  //     this.bs.current.snapTo(1);
-  //   });
-  // };
+  const handleEdit = async (id) => {
+    console.log("edit pressed");
+    console.log(id);
 
-  // const choosePhotoFromLibrary = () => {
-  //   ImagePicker.openPicker({
-  //     width: 300,
-  //     height: 300,
-  //     cropping: true,
-  //     compressImageQuality: 0.7,
-  //   }).then((image) => {
-  //     console.log(image);
-  //     setImage(image.path);
-  //     this.bs.current.snapTo(1);
-  //   });
-  // };
+    const res = await fetch(
+      `https://planit-fyp.herokuapp.com/api/users/update/${id}`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          city,
+          country,
+          avatar,
+        }),
+      }
+    );
+    const response = await res.json();
+    console.log(response);
+    //storeData(response.name);
+
+    if (response.token) {
+      setToken(response.token);
+      // userInformation.name = name;
+      // userInformation.phone = phone;
+      // userInformation.email = email;
+      // userInformation.city = city;
+      // userInformation.country = country;
+
+      dispatch(
+        setUser({
+          ...userInformation,
+          name: response.name,
+          phone: response.phone,
+          token: response.token,
+          email: response.email,
+          city: response.city,
+          country: response.country,
+          avatar: response.avatar,
+        })
+      );
+      alert("User Updated");
+      setName("");
+      setPhone("");
+      setEmail("");
+      setCity("");
+      setCountry("");
+      setAvatar("");
+    }
+  };
 
   const renderInner = () => (
     <View style={styles.panel}>
@@ -96,12 +170,12 @@ const EditProfileScreen = () => {
         <Text style={styles.panelTitle}>Upload Photo</Text>
         <Text style={styles.panelSubtitle}>Choose Your Profile Picture</Text>
       </View>
-      <Pressable style={styles.panelButton} onPress={takeImage}>
+      <TouchableOpacity style={styles.panelButton} onPress={takeImage}>
         <Text style={styles.panelButtonTitle}>Take Photo</Text>
-      </Pressable>
-      <Pressable style={styles.panelButton} onPress={pickerImage}>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.panelButton} onPress={addImage}>
         <Text style={styles.panelButtonTitle}>Choose From Library</Text>
-      </Pressable>
+      </TouchableOpacity>
       {Platform.OS === "android" ? (
         <TouchableOpacity
           style={styles.panelButton}
@@ -152,8 +226,8 @@ const EditProfileScreen = () => {
           <TouchableOpacity onPress={() => bs.current.snapTo(0)}>
             <View
               style={{
-                height: 100,
-                width: 100,
+                height: 200,
+                width: 200,
                 borderRadius: 15,
                 justifyContent: "center",
                 alignItems: "center",
@@ -161,7 +235,7 @@ const EditProfileScreen = () => {
             >
               <ImageBackground
                 source={{
-                  uri: image,
+                  uri: "https://api.adorable.io/avatars/80/abott@adorable.png",
                 }}
                 style={{ height: 100, width: 100 }}
                 imageStyle={{ borderRadius: 15 }}
@@ -173,7 +247,7 @@ const EditProfileScreen = () => {
                     alignItems: "center",
                   }}
                 >
-                  <Icon
+                  {/* <Icon
                     name="camera"
                     size={35}
                     color="#fff"
@@ -184,36 +258,36 @@ const EditProfileScreen = () => {
                       borderWidth: 1,
                       borderColor: "#fff",
                       borderRadius: 10,
-                      backgroundColor: "gray",
+                      backgroundColor: "black",
                     }}
-                  />
+                  /> */}
+                  <View style={styles.imageStyle}>
+                    {image && (
+                      <Image
+                        source={{
+                          uri: image,
+                        }}
+                        style={{ width: 200, height: 200 }}
+                      />
+                    )}
+                  </View>
                 </View>
               </ImageBackground>
             </View>
           </TouchableOpacity>
           <Text style={{ marginTop: 10, fontSize: 18, fontWeight: "bold" }}>
-            John Doe
+            {userInformation.name}
           </Text>
         </View>
 
         <View style={styles.action}>
           <FontAwesome name="user-o" color={colors.text} size={20} />
           <TextInput
-            placeholder="First Name"
-            placeholderTextColor="#666666"
-            autoCorrect={false}
-            style={[
-              styles.textInput,
-              {
-                color: colors.text,
-              },
-            ]}
-          />
-        </View>
-        <View style={styles.action}>
-          <FontAwesome name="user-o" color={colors.text} size={20} />
-          <TextInput
             placeholder="Last Name"
+            value={name}
+            onChangeText={(name) => {
+              setName(name);
+            }}
             placeholderTextColor="#666666"
             autoCorrect={false}
             style={[
@@ -228,6 +302,10 @@ const EditProfileScreen = () => {
           <Feather name="phone" color={colors.text} size={20} />
           <TextInput
             placeholder="Phone"
+            value={phone}
+            onChangeText={(phone) => {
+              setPhone(phone);
+            }}
             placeholderTextColor="#666666"
             keyboardType="number-pad"
             autoCorrect={false}
@@ -243,6 +321,10 @@ const EditProfileScreen = () => {
           <FontAwesome name="envelope-o" color={colors.text} size={20} />
           <TextInput
             placeholder="Email"
+            value={email}
+            onChangeText={(email) => {
+              setEmail(email);
+            }}
             placeholderTextColor="#666666"
             keyboardType="email-address"
             autoCorrect={false}
@@ -258,6 +340,10 @@ const EditProfileScreen = () => {
           <FontAwesome name="globe" color={colors.text} size={20} />
           <TextInput
             placeholder="Country"
+            value={country}
+            onChangeText={(country) => {
+              setCountry(country);
+            }}
             placeholderTextColor="#666666"
             autoCorrect={false}
             style={[
@@ -272,6 +358,10 @@ const EditProfileScreen = () => {
           <Icon name="map-marker-outline" color={colors.text} size={20} />
           <TextInput
             placeholder="City"
+            value={city}
+            onChangeText={(city) => {
+              setCity(city);
+            }}
             placeholderTextColor="#666666"
             autoCorrect={false}
             style={[
@@ -282,7 +372,10 @@ const EditProfileScreen = () => {
             ]}
           />
         </View>
-        <TouchableOpacity style={styles.commandButton} onPress={() => {}}>
+        <TouchableOpacity
+          style={styles.commandButton}
+          onPress={() => handleEdit(userInformation.id)}
+        >
           <Text style={styles.panelButtonTitle}>Submit</Text>
         </TouchableOpacity>
       </Animated.View>
@@ -293,6 +386,15 @@ const EditProfileScreen = () => {
 export default EditProfileScreen;
 
 const styles = StyleSheet.create({
+  imageStyle: {
+    elevation: 2,
+    height: 200,
+    width: 200,
+    backgroundColor: "#efefef",
+    position: "relative",
+    borderRadius: 999,
+    overflow: "hidden",
+  },
   container: {
     flex: 1,
     backgroundColor: "white",

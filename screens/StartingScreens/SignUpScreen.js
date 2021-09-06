@@ -165,6 +165,8 @@ import Feather from "react-native-vector-icons/Feather";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import { LinearGradient } from "expo-linear-gradient";
 import Colors from "../../constants/Colors";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../slices/navSlice";
 
 const SignUpScreen = ({ navigation }) => {
   const [data, setData] = React.useState({
@@ -177,6 +179,23 @@ const SignUpScreen = ({ navigation }) => {
     secureTextEntry: true,
     confirm_secureTextEntry: true,
   });
+  const [name, setName] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [phone, setPhone] = React.useState("");
+  const [token, setToken] = React.useState("");
+  // var token = "";
+  const [message, setMessage] = React.useState("");
+
+  const dispatch = useDispatch();
+
+  const storeData = async (value) => {
+    try {
+      await AsyncStorage.setItem("@storage_Key", value);
+    } catch (e) {
+      // saving error
+    }
+  };
 
   const textInputChange = (val) => {
     if (val.length !== 0) {
@@ -252,6 +271,40 @@ const SignUpScreen = ({ navigation }) => {
     });
   };
 
+  const handleSubmit = async () => {
+    const res = await fetch(`https://planit-fyp.herokuapp.com/api/users/`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+        phone,
+      }),
+    });
+    const response = await res.json();
+    if (response.token) {
+      setToken(response.token);
+      dispatch(
+        setUser({
+          name: response.name,
+          phone: response.phone,
+          token: response.token,
+        })
+      );
+      navigation.navigate("EnterPinScreen");
+      setName("");
+      setEmail("");
+      setPassword("");
+      setPhone("");
+    } else {
+      alert(`Error:${response.message}`);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* <StatusBar backgroundColor={Colors.primary} barStyle="light-content" /> */}
@@ -267,7 +320,11 @@ const SignUpScreen = ({ navigation }) => {
               placeholder="Your Username"
               style={styles.textInput}
               autoCapitalize="none"
-              onChangeText={(val) => textInputChange(val)}
+              value={name}
+              onChangeText={(name) => {
+                textInputChange(name);
+                setName(name);
+              }}
             />
             {data.check_textInputChange ? (
               <Animatable.View animation="bounceIn">
@@ -291,7 +348,11 @@ const SignUpScreen = ({ navigation }) => {
               placeholder="Your E-mail"
               style={styles.textInput}
               autoCapitalize="none"
-              onChangeText={(val) => textInputChanges(val)}
+              value={email}
+              onChangeText={(email) => {
+                textInputChanges(email);
+                setEmail(email);
+              }}
             />
             {data.check_textInputChanges ? (
               <Animatable.View animation="bounceIn">
@@ -315,7 +376,11 @@ const SignUpScreen = ({ navigation }) => {
               placeholder="Your Phone Number"
               style={styles.textInput}
               autoCapitalize="none"
-              onChangeText={(val) => textInputChanged(val)}
+              value={phone}
+              onChangeText={(phone) => {
+                textInputChanged(phone);
+                setPhone(phone);
+              }}
               keyboardType="number-pad"
             />
             {data.check_textInputChanged ? (
@@ -342,7 +407,11 @@ const SignUpScreen = ({ navigation }) => {
               secureTextEntry={data.secureTextEntry ? true : false}
               style={styles.textInput}
               autoCapitalize="none"
-              onChangeText={(val) => handlePasswordChange(val)}
+              value={password}
+              onChangeText={(password) => {
+                handlePasswordChange(password);
+                setPassword(password);
+              }}
             />
             <TouchableOpacity onPress={updateSecureTextEntry}>
               {data.secureTextEntry ? (
@@ -398,7 +467,7 @@ const SignUpScreen = ({ navigation }) => {
             <TouchableOpacity
               style={styles.signIn}
               onPress={() => {
-                navigation.navigate("EnterPinScreen");
+                handleSubmit();
               }}
             >
               <LinearGradient

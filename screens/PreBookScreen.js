@@ -16,6 +16,8 @@ import {
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Colors from "../constants/Colors";
 import hotels from "../constants/hotels";
+// import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+// import { GOOGLE_MAPS_APIKEY } from "@env";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_MAPS_APIKEY } from "@env";
 import { useDispatch } from "react-redux";

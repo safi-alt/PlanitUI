@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Button,
@@ -13,17 +13,46 @@ import Colors from "../constants/Colors";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native";
 
+import { useSelector } from "react-redux";
+import {
+  selectTravelTimeInformation,
+  selectOrigin,
+  selectDestination,
+  selectUser,
+  selectTripCost,
+  setGuide,
+  setGuideLocation,
+  selectGuideLocation,
+  setStartTrip,
+  selectOrder,
+} from "../slices/navSlice";
+import { useDispatch } from "react-redux";
+import io from "socket.io-client";
+import moment from "moment";
+
 export const PreBookDateNTime = () => {
-  const [date, setDate] = useState(new Date(1598051730000));
+  //1598051730000
+  //moment().format("DD/MM/YYYY hh:mm:ss A")
+  //moment().utc()
+  const dispatch = useDispatch();
+  const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState("");
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
   const [text, setText] = useState("Empty");
+  const [duration, setDuration] = useState("");
   const navigation = useNavigation();
+  const orderInformation = useSelector(selectOrder);
+  const userInformation = useSelector(selectUser);
+  const destinationInformation = useSelector(selectDestination);
+  const travelTimeInformation = useSelector(selectTravelTimeInformation);
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === "ios");
     setDate(currentDate);
+    // console.log(currentDate);
+    //console.log(new Date());
 
     let tempDate = new Date(currentDate);
     let fDate =
@@ -41,13 +70,101 @@ export const PreBookDateNTime = () => {
       (tempDate.getHours() >= 12 ? "pm" : "am");
     setText(fDate + "\n" + fTime);
 
-    console.log(fTime);
-    console.log(tempDate);
+    setTime(fTime);
+    //  console.log(typeof fTime);
+    //console.log(tempDate);
   };
 
   const showMode = (currentMode) => {
     setShow(true);
     setMode(currentMode);
+  };
+  let socket = io("https://planit-fyp.herokuapp.com");
+  useEffect(() => {
+    // console.log(orderInformation);
+    //console.log(date);
+
+    setDuration(travelTimeInformation?.duration?.text);
+    socket.on("guide details", (detail) => {
+      // console.log(detail);
+      // setVal(false);
+      dispatch(
+        setGuide({
+          guideName: detail.name,
+          guidePhone: detail.phone,
+        })
+      );
+      // alert(`Guide:${detail.name},Phone:${detail.phone}`);
+      navigation.navigate("TourOptionsCard");
+      // setCnic(detail.cnic);
+      // setDriver(detail.driver);
+      // setMessage(detail.message);
+    });
+
+    // socket.on("guide Location", (location) => {
+    //   //console.log(location);
+    //   dispatch(
+    //     setGuideLocation({
+    //       ...guideLocation,
+    //       guideLatitude: location.latitude,
+    //       guideLongitude: location.longitude,
+    //     })
+    //   );
+    // });
+
+    // socket.on("final Posiiton", (location) => {
+    //   dispatch(
+    //     setGuideLocation({
+    //       ...guideLocation,
+    //       guideLatitude: false,
+    //       guideLongitude: false,
+    //     })
+    //   );
+    // });
+
+    //   }, []);
+    // console.log(userInformation);
+    // console.log(originInformation);
+    // console.log(destinationInformation);
+  }, [destinationInformation, orderInformation]);
+
+  const handleEditOrder = async (id) => {
+    //   setVal(true);
+
+    let d1 = date.toISOString();
+    d1 = moment(d1.split("T")[0]).format("DD/MM/YYYY");
+    console.log(d1);
+    console.log(time);
+
+    const res = await fetch(
+      `https://planit-fyp.herokuapp.com/api/orders/updateOrder/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          date: d1,
+          time,
+        }),
+      }
+    );
+    const response = await res.json();
+    console.log(response);
+    // if (response) navigation.navigate("PreBookDateNTime");
+    if (response) alert("Order updated");
+    socket.emit("order details", response);
+    // socket.emit("order details", {
+    //   Name: response.data.name,
+    //   Phone: response.data.phone,
+    //   Origin: response.data.origin,
+    //   Destination: response.data.destination,
+    //   OriginLatitude: response.data.originlatitude,
+    //   OriginLongitude: response.data.originLongitude,
+    //   DestLatitude: response.data.destLatitude,
+    //   DestLongitude: response.data.destLongitude,
+    // });
   };
 
   return (
@@ -81,7 +198,9 @@ export const PreBookDateNTime = () => {
         style={[tw`mt-auto border-t border-gray-200`, { alignItems: "center" }]}
       >
         <TouchableOpacity
-          onPress={() => navigation.navigate("TourOptionsCard")}
+          onPress={() => {
+            handleEditOrder(orderInformation.data._id);
+          }}
           style={{ backgroundColor: Colors.primary }}
         >
           <Text style={tw`text-center text-white text-xl p-3`}>
