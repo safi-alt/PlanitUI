@@ -13,6 +13,8 @@ import profile from "../assets/profile.png";
 import home from "../assets/home.png";
 import search from "../assets/search.png";
 import notifications from "../assets/bell.png";
+import payments from "../assets/paymentInfo.png";
+import preBookTrips from "../assets/preBookTrips.png";
 
 import edit from "../assets/edit.png";
 // import settings from "../assets/settings.png";
@@ -32,6 +34,8 @@ import Colors from "../constants/Colors";
 import ProfileScreen from "./ProfileScreen";
 import EditProfileScreen from "./EditProfileScreen";
 import YourTripsScreen from "./YourTripsScreen";
+import Payments from "./Payments";
+import PreBookNavigator from "./PreBookNavigator";
 
 const SideNavScreen = () => {
   const Stack = createStackNavigator();
@@ -113,6 +117,20 @@ const SideNavScreen = () => {
             nav={"YourTripsScreen"}
             title={"Your Trips"}
             image={notifications}
+          />
+          <TabButtton
+            currentTab={currentTab}
+            setCurrentTab={setCurrentTab}
+            nav={"Payments"}
+            title={"Payments"}
+            image={payments}
+          />
+          <TabButtton
+            currentTab={currentTab}
+            setCurrentTab={setCurrentTab}
+            nav={"PreBookTrips"}
+            title={"Pre Book Trip"}
+            image={preBookTrips}
           />
         </View>
 
@@ -224,6 +242,20 @@ const SideNavScreen = () => {
               <Stack.Screen
                 name="YourTripsScreen"
                 component={YourTripsScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Payments"
+                component={Payments}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="PreBookTrips"
+                component={PreBookNavigator}
                 options={{
                   headerShown: false,
                 }}
