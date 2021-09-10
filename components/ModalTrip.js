@@ -12,10 +12,12 @@ import {
 } from "react-native";
 import Colors from "../constants/Colors";
 import { Rating, AirbnbRating } from "react-native-ratings";
+import io from "socket.io-client";
 
 const ModalPoup = ({ visible, children }) => {
   const [showModal, setShowModal] = React.useState(visible);
   const scaleValue = React.useRef(new Animated.Value(0)).current;
+  //  let socket = io("https://planit-fyp.herokuapp.com");
   React.useEffect(() => {
     toggleModal();
   }, [visible]);
@@ -52,61 +54,83 @@ const ModalPoup = ({ visible, children }) => {
   );
 };
 
-const ModalTrip = () => {
-  const [visible, setVisible] = React.useState(false);
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        position: "absolute",
-      }}
-    >
-      <ModalPoup visible={visible}>
-        <View style={{ alignItems: "center" }}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => setVisible(false)}>
-              <Image
-                source={require("../assets/x.png")}
-                style={{ height: 30, width: 30 }}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={{ alignItems: "center" }}>
-          <Image
-            source={require("../assets/success.png")}
-            style={{ height: 150, width: 150, marginVertical: 10 }}
-          />
-        </View>
+// const ModalTrip = (show) => {
+//   const [visible, setVisible] = React.useState(show);
+//   const payment = () => {
+//     // console.log("Hello");
+//     // console.log(paymentMethod);
+//     let payment = "cash";
+//     socket.emit("payment method", payment);
+//   };
+//   React.useEffect(() => {
+//     socket = io(" https://4493-59-103-201-229.ngrok.io");
+//     console.log("Hello world");
+//     payment();
+//   }, [visible, socket]);
 
-        <Text style={{ marginVertical: 30, fontSize: 20, textAlign: "center" }}>
-          Congratulations trip was successful
-        </Text>
+//   return (
+//     <View
+//       style={{
+//         flex: 1,
+//         justifyContent: "center",
+//         alignItems: "center",
+//         position: "absolute",
+//       }}
+//     >
+//       <ModalPoup visible={visible}>
+//         <View style={{ alignItems: "center" }}>
+//           <View style={styles.header}>
+//             <TouchableOpacity onPress={() => setVisible(false)}>
+//               <Image
+//                 source={require("../assets/x.png")}
+//                 style={{ height: 30, width: 30 }}
+//               />
+//             </TouchableOpacity>
+//           </View>
+//         </View>
+//         <View style={{ alignItems: "center" }}>
+//           <Image
+//             source={require("../assets/success.png")}
+//             style={{ height: 150, width: 150, marginVertical: 10 }}
+//           />
+//         </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-around",
-            marginTop: 5,
-          }}
-        >
-          <TouchableOpacity style={styles.commandButton} onPress={() => {}}>
-            <Text style={styles.panelButtonTitle}>Cash</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.commandButton} onPress={() => {}}>
-            <Text style={styles.panelButtonTitle}>Card</Text>
-          </TouchableOpacity>
-        </View>
-        <AirbnbRating />
-      </ModalPoup>
-      <Pressable onPress={() => setVisible(true)}>
-        <Text>Open Modal</Text>
-      </Pressable>
-    </View>
-  );
-};
+//         <Text style={{ marginVertical: 30, fontSize: 20, textAlign: "center" }}>
+//           Congratulations trip was successful
+//         </Text>
+
+//         <View
+//           style={{
+//             flexDirection: "row",
+//             justifyContent: "space-around",
+//             marginTop: 5,
+//           }}
+//         >
+//           <TouchableOpacity
+//             style={styles.commandButton}
+//             onPress={() => {
+//               payment();
+//             }}
+//           >
+//             <Text style={styles.panelButtonTitle}>Cash</Text>
+//           </TouchableOpacity>
+//           <TouchableOpacity
+//             style={styles.commandButton}
+//             onPress={() => {
+//               payment();
+//             }}
+//           >
+//             <Text style={styles.panelButtonTitle}>Card</Text>
+//           </TouchableOpacity>
+//         </View>
+//         <AirbnbRating />
+//       </ModalPoup>
+//       <Pressable onPress={() => setVisible(true)}>
+//         <Text>Open Modal</Text>
+//       </Pressable>
+//     </View>
+//   );
+// };
 
 const styles = StyleSheet.create({
   modalBackGround: {
@@ -143,4 +167,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModalTrip;
+export default ModalPoup;

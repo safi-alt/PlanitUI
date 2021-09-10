@@ -14,6 +14,7 @@ import Feather from "react-native-vector-icons/Feather";
 import Colors from "../constants/Colors";
 import { setOrigin, setDestination, selectUser } from "../slices/navSlice";
 import { useSelector } from "react-redux";
+import profile from "../assets/safi.jpg";
 
 // import Share from 'react-native-share';
 
@@ -35,6 +36,8 @@ const ProfileScreen = () => {
   //   }
   // };
   const userInformation = useSelector(selectUser);
+  //file:///storage/emulated/0/Android/data/com.driverapp/files/Pictures/00b12f50-8ba1-4856-96ff-b0f3eebaebdb.jpg
+  // const [image, setImage] = React.useState(userInformation.avatar);
   const [image, setImage] = React.useState(userInformation.avatar);
   React.useEffect(() => {
     setImage(userInformation.avatar);

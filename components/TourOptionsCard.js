@@ -12,7 +12,7 @@ import { Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Colors from "../constants/Colors";
 const { width } = Dimensions.get("screen");
-import profile from "../assets/profile.png";
+import profile from "../assets/safi.jpg";
 import {
   setOrigin,
   setDestination,

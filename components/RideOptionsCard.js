@@ -25,6 +25,9 @@ import {
 } from "../slices/navSlice";
 import { useDispatch } from "react-redux";
 import io from "socket.io-client";
+import ModalTrip from "./ModalTrip";
+import ModalPoup from "./ModalTrip";
+import { Rating, AirbnbRating } from "react-native-ratings";
 
 const data = [
   {
@@ -74,12 +77,17 @@ const RideOptionsCard = () => {
   const [guideFound, setGuideFound] = useState(false);
   const guideLocation = useSelector(selectGuideLocation);
   const [val, setVal] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   let socket = io("https://planit-fyp.herokuapp.com");
 
   useEffect(() => {
     // console.log(travelTimeInformation);
     setDuration(travelTimeInformation?.duration?.text);
+    socket.on("trip completed", (response) => {
+      setVisible(response);
+    });
+
     socket.on("guide details", (detail) => {
       // console.log(detail);
       setVal(false);
@@ -123,6 +131,18 @@ const RideOptionsCard = () => {
     // console.log(destinationInformation);
   }, [destinationInformation, travelTimeInformation]);
 
+  const payment = (payment) => {
+    // console.log("Hello");
+    // console.log(paymentMethod);
+    socket.emit("payment method", payment);
+  };
+
+  const paymentCard = (payment) => {
+    // console.log("Hello");
+    // console.log(paymentMethod);
+    socket.emit("payment card", payment);
+  };
+
   const handleSubmitOrder = async () => {
     setVal(true);
     var finalCost = cost.filter((x) => x.id === selected.id).map((x) => x.pay);
@@ -155,6 +175,8 @@ const RideOptionsCard = () => {
     const response = await res.json();
     //console.log(response);
     socket.emit("order details", response);
+    let payment = "cash";
+    socket.emit("payment method", payment);
     // socket.emit("order details", {
     //   Name: response.data.name,
     //   Phone: response.data.phone,
@@ -256,10 +278,91 @@ const RideOptionsCard = () => {
           </Text>
         </TouchableOpacity>
       </View>
+      <ModalPoup visible={visible}>
+        <View style={{ alignItems: "center" }}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => setVisible(false)}>
+              <Image
+                source={require("../assets/x.png")}
+                style={{ height: 30, width: 30 }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{ alignItems: "center" }}>
+          <Image
+            source={require("../assets/success.png")}
+            style={{ height: 150, width: 150, marginVertical: 10 }}
+          />
+        </View>
+
+        <Text style={{ marginVertical: 30, fontSize: 20, textAlign: "center" }}>
+          Congratulations trip was successful
+        </Text>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            marginTop: 5,
+          }}
+        >
+          <TouchableOpacity
+            style={styles.commandButton}
+            onPress={() => {
+              paymentCard("card");
+            }}
+          >
+            <Text style={styles.panelButtonTitle}>Cash</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.commandButton}
+            onPress={() => {
+              payment("cash");
+            }}
+          >
+            <Text style={styles.panelButtonTitle}>Card</Text>
+          </TouchableOpacity>
+        </View>
+        <AirbnbRating />
+      </ModalPoup>
     </SafeAreaView>
   );
 };
 
 export default RideOptionsCard;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  modalBackGround: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    width: "80%",
+    backgroundColor: "white",
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+    borderRadius: 20,
+    elevation: 20,
+  },
+  header: {
+    width: "100%",
+    height: 40,
+    alignItems: "flex-end",
+    justifyContent: "center",
+  },
+  commandButton: {
+    padding: 15,
+    borderRadius: 10,
+    backgroundColor: Colors.primary,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  panelButtonTitle: {
+    fontSize: 17,
+    fontWeight: "bold",
+    color: "white",
+  },
+});

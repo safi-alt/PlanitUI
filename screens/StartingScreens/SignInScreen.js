@@ -19,7 +19,7 @@ import { useTheme } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import Colors from "../../constants/Colors";
 import { useDispatch } from "react-redux";
-import { setUser } from "../../slices/navSlice";
+import { setPayment, setUser } from "../../slices/navSlice";
 
 // import { AuthContext } from "../components/context";
 
@@ -154,8 +154,8 @@ const SignInScreen = ({ navigation }) => {
           avatar: response.avatar,
         })
       );
-       navigation.navigate("SideNavScreen");
-     // navigation.navigate("PushNotifications");
+      navigation.navigate("SideNavScreen");
+      // navigation.navigate("PushNotifications");
 
       setEmail("");
       setPassword("");
@@ -263,7 +263,7 @@ const SignInScreen = ({ navigation }) => {
         {data.isValidPassword ? null : (
           <Animatable.View animation="fadeInLeft" duration={500}>
             <Text style={styles.errorMsg}>
-              Password must be 8 characters long.
+              {/* Password must be 8 characters long. */}
             </Text>
           </Animatable.View>
         )}

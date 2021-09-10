@@ -5,8 +5,8 @@ import tw from "tailwind-react-native-classnames";
 // import { GOOGLE_MAPS_APIKEY } from "@env";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_MAPS_APIKEY } from "@env";
-import { useDispatch } from "react-redux";
-import { setDestination } from "../slices/navSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser, setDestination } from "../slices/navSlice";
 import { useNavigation } from "@react-navigation/native";
 import NavFavourites from "./NavFavourites";
 import { TouchableOpacity } from "react-native";
@@ -17,10 +17,13 @@ import { KeyboardAvoidingView } from "react-native";
 const NavigateCard = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const userInformation = useSelector(selectUser);
 
   return (
     <SafeAreaView style={tw`bg-white flex-1`}>
-      <Text style={tw`text-center py-5 text-xl`}>Good Morning, Safey</Text>
+      <Text style={tw`text-center py-5 text-xl`}>
+        Good Morning,{userInformation.name}{" "}
+      </Text>
       <View style={tw`border-t border-gray-200 flex-shrink`}>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}

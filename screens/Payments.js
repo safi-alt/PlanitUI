@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -15,6 +15,19 @@ import {
 } from "react-native-credit-card-input";
 import tw from "tailwind-react-native-classnames";
 import Colors from "../constants/Colors";
+import { useSelector } from "react-redux";
+import {
+  selectTravelTimeInformation,
+  selectOrigin,
+  selectDestination,
+  selectUser,
+  selectPayment,
+  selectTripCost,
+  setGuide,
+  setGuideLocation,
+  selectGuideLocation,
+  setStartTrip,
+} from "../slices/navSlice";
 
 const { width, height } = Dimensions.get("screen");
 import faker from "faker";
@@ -42,8 +55,57 @@ const ITEM_SIZE = AVATAR_SIZE + SPACING * 3;
 
 const Payments = () => {
   const scrollY = React.useRef(new Animated.Value(0)).current;
+  const userInformation = useSelector(selectUser);
+  const paymentInformation = useSelector(selectPayment);
 
-  const onChange = (form) => console.log(form);
+  const [user, setUser] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvc, setCvc] = useState("");
+
+  useEffect(() => {
+    setUser(userInformation.id);
+    // console.log(paymentInformation);
+    // console.log(paymentInformation);
+    //getPayment(userInformation.id);
+    //console.log(labels);
+  }, [userInformation]);
+
+  const handleSubmitPayment = async () => {
+    const res = await fetch(`https://planit-fyp.herokuapp.com/api/payment`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user,
+        cardNumber,
+        expiry,
+        cvc,
+      }),
+    });
+    const response = await res.json();
+    console.log(response);
+    // socket.emit("order details", response);
+    // socket.emit("order details", {
+    //   Name: response.data.name,
+    //   Phone: response.data.phone,
+    //   Origin: response.data.origin,
+    //   Destination: response.data.destination,
+    //   OriginLatitude: response.data.originlatitude,
+    //   OriginLongitude: response.data.originLongitude,
+    //   DestLatitude: response.data.destLatitude,
+    //   DestLongitude: response.data.destLongitude,
+    // });
+  };
+
+  const onChange = (form) => {
+    console.log(form.values);
+    setCardNumber(form.values.number);
+    setCvc(form.values.cvc);
+    setExpiry(form.values.expiry);
+  };
 
   return (
     <View style={{ backgroundColor: "white", flex: 1 }}>
@@ -56,7 +118,7 @@ const Payments = () => {
           })
         }
       >
-        <CreditCardInput onChange={onChange} />
+        <CreditCardInput autoFocus={true} onChange={onChange} />
         <View
           style={{
             flexDirection: "row",
@@ -64,7 +126,12 @@ const Payments = () => {
             marginTop: 5,
           }}
         >
-          <TouchableOpacity style={styles.commandButton} onPress={() => {}}>
+          <TouchableOpacity
+            style={styles.commandButton}
+            onPress={() => {
+              handleSubmitPayment();
+            }}
+          >
             <Text style={styles.panelButtonTitle}>Submit</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.commandButton} onPress={() => {}}>

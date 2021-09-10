@@ -148,7 +148,7 @@ const PreBookRideOptionsCard = () => {
         originLongitude: originInformation.location.lng,
         destLatitude: destinationInformation.location.lat,
         destLongitude: destinationInformation.location.lng,
-        category: "Prebook",
+        category: "prebook",
       }),
     });
     const response = await res.json();

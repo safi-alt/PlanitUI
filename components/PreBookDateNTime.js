@@ -169,7 +169,9 @@ export const PreBookDateNTime = () => {
 
   return (
     <SafeAreaView style={tw`bg-white flex-grow`}>
-      <Text style={tw`text-center py-5 text-xl`}>Good Morning, Safey</Text>
+      <Text style={tw`text-center py-5 text-xl`}>
+        Good Morning, {userInformation.name}
+      </Text>
       <View style={styles.cardBox}>
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
           <View style={{ margin: 20 }}>

@@ -73,6 +73,8 @@ const EditProfileScreen = () => {
   // var token = "";
   const [message, setMessage] = React.useState("");
 
+  const [type, setType] = useState("");
+
   useEffect(() => {
     // console.log(userInformation);
     console.log(userInformation.id);
@@ -179,7 +181,9 @@ const EditProfileScreen = () => {
       {Platform.OS === "android" ? (
         <TouchableOpacity
           style={styles.panelButton}
-          onPress={() => bs.current.snapTo(1)}
+          onPress={() => {
+            bs.current.snapTo(1);
+          }}
         >
           <Text style={styles.panelButtonTitle}>Cancel</Text>
         </TouchableOpacity>
