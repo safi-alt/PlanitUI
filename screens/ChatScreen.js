@@ -10,10 +10,60 @@ import Colors from "../constants/Colors";
 
 const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
+  const [text, setText] = useState([]);
+
+  const getChat = async (text) => {
+    const res = await fetch(`https://planit-fyp.herokuapp.com/api/chat/`);
+
+    const response = await res.json();
+    console.log(response.allChat);
+    // setMessages(response.allChat);
+    // for (let i = 0; i < response.allChat.length; i++) {
+    //   setMessages([
+    //     {
+    //       ...messages,
+    //       _id: i.messageId,
+    //       text: i.text,
+    //       createdAt: i.createdAt,
+    //       user: {
+    //         _id: i.userId,
+    //         avatar: i.avatar,
+    //       },
+    //       sent: false,
+    //       received: false,
+    //       pending: false,
+    //     },
+    //   ]);
+    // }
+
+    response.allChat.map((x) => {
+      setMessages([
+        {
+          ...messages,
+          _id: x.messageId,
+          text: x.text,
+          createdAt: x.createdAt,
+          user: {
+            _id: x.userId,
+            avatar: x.avatar,
+          },
+          sent: false,
+          received: false,
+          pending: false,
+        },
+      ]);
+    });
+    setMessages((previousMessages) =>
+      GiftedChat.append(previousMessages, messages)
+    );
+    //storeData(response.name);
+  };
 
   useEffect(() => {
     socket = io("https://planit-fyp.herokuapp.com/");
-
+    console.log("Hello world");
+    //getChat();
+    console.log("hello");
     socket.on("chat message", (msg) => {
       var msgArray = [
         {
@@ -37,9 +87,36 @@ const ChatScreen = () => {
     });
   }, []);
 
+  const handleChat = async (text, userId, avatar, messageId, createdAt) => {
+    const res = await fetch(`https://planit-fyp.herokuapp.com/api/chat/`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text,
+        userId,
+        avatar,
+        messageId,
+        createdAt,
+      }),
+    });
+    const response = await res.json();
+    console.log(response);
+    //storeData(response.name);
+  };
+
   const onSend = useCallback((messages = []) => {
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages)
+    );
+    handleChat(
+      messages[0].text,
+      messages[0].user._id,
+      messages[0].user.avatar,
+      messages[0]._id,
+      messages[0].createdAt
     );
 
     socket.emit("guide message", messages);
@@ -100,7 +177,7 @@ const ChatScreen = () => {
         showAvatarForEveryMessage={true}
         onSend={(messages) => onSend(messages)}
         user={{
-          _id: 1,
+          _id: 2,
           avatar:
             "https://th.bing.com/th/id/OIP.VlLvg3eZH0pRik3EQCgirgHaFj?w=253&h=190&c=7&o=5&pid=1.7",
         }}

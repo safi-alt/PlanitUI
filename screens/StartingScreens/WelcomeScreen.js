@@ -10,9 +10,27 @@ import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const WelcomeScreen = (props) => {
   const navigation = useNavigation();
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@storage_Key");
+      const obj = JSON.parse(value);
+      if (value !== null) {
+        navigation.navigate("SideNavScreen", { screen: "HomeScreen" });
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
+
+  React.useEffect(() => {
+    getData();
+  }, []);
+
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.firstRow}>

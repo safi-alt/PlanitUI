@@ -89,6 +89,40 @@ const PreBookListDetails = ({ navigation, route }) => {
               })}
             </View>
             <View>
+              <Animatable.View
+                animation="fadeInUp"
+                // delay={DURATION * 2 + index * 100}
+                key={item.key}
+                style={{ marginVertical: SPACING }}
+              >
+                <Text style={styles.title}>{item.name}</Text>
+
+                <View
+                  key={item.key}
+                  style={{
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    marginBottom: SPACING / 2,
+                    marginLeft: SPACING,
+                  }}
+                >
+                  <View
+                    style={{
+                      height: 8,
+                      width: 8,
+                      borderRadius: 4,
+                      backgroundColor: "gold",
+                      marginRight: SPACING,
+                    }}
+                  />
+                  <Text style={styles.subTitle}>{item.date}</Text>
+                  <Text style={styles.subTitle}>{item.time}</Text>
+                  <Text style={styles.subTitle}>{item.origin}</Text>
+                  <Text style={styles.subTitle}>{item.destination}</Text>
+                </View>
+              </Animatable.View>
+            </View>
+            {/* <View>
               {item.categories.map((category, index) => {
                 return (
                   <Animatable.View
@@ -125,7 +159,7 @@ const PreBookListDetails = ({ navigation, route }) => {
                   </Animatable.View>
                 );
               })}
-            </View>
+            </View> */}
           </ScrollView>
         </View>
       </SharedElement>

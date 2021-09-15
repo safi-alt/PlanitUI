@@ -20,10 +20,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Colors from "../../constants/Colors";
 import { useDispatch } from "react-redux";
 import { setPayment, setUser } from "../../slices/navSlice";
-
-// import { AuthContext } from "../components/context";
-
-// import Users from "../model/users";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignInScreen = ({ navigation }) => {
   const [data, setData] = React.useState({
@@ -121,6 +118,14 @@ const SignInScreen = ({ navigation }) => {
     signIn(foundUser);
   };
 
+  const storeData = async (value) => {
+    try {
+      await AsyncStorage.setItem("@storage_Key", JSON.stringify(value));
+    } catch (e) {
+      // saving error
+    }
+  };
+
   const handleLogin = async () => {
     const res = await fetch(
       `https://planit-fyp.herokuapp.com/api/users/login`,
@@ -141,6 +146,7 @@ const SignInScreen = ({ navigation }) => {
     //storeData(response.name);
 
     if (response.token) {
+      storeData(response);
       setToken(response.token);
       dispatch(
         setUser({

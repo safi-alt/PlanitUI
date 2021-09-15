@@ -27,6 +27,8 @@ import Communication from "./components/Communication";
 import PreBookScreen from "./screens/PreBookScreen";
 import PreBookMapScreen from "./screens/PreBookMapScreen";
 import PopScreen from "./screens/PopScreen";
+import AuthScreen from "./screens/AuthScreen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -49,6 +51,18 @@ export default function App() {
       />
     );
   }
+
+  // const getData = async () => {
+  //   try {
+  //     const value = await AsyncStorage.getItem("@storage_Key");
+  //     if (value !== null) {
+  //       // value previously stored
+  //       console.log(value);
+  //     }
+  //   } catch (e) {
+  //     // error reading value
+  //   }
+  // };
 
   return (
     <Provider store={store}>
@@ -74,7 +88,7 @@ export default function App() {
                   headerShown: false,
                 }}
               /> */}
-              <Stack.Screen
+              {/* <Stack.Screen
                 name="WelcomeScreen"
                 component={WelcomeScreen}
                 options={{
@@ -123,7 +137,16 @@ export default function App() {
                 options={{
                   headerShown: false,
                 }}
+              /> */}
+
+              <Stack.Screen
+                name="AuthScreen"
+                component={AuthScreen}
+                options={{
+                  headerShown: false,
+                }}
               />
+
               <Stack.Screen
                 name="SideNavScreen"
                 component={SideNavScreen}

@@ -12,23 +12,32 @@ import {
   selectGuideLocation,
   selectOrigin,
   setTravelTimeInformation,
+  selectPreOrigin,
+  selectPreDestination,
+  selectPreTravelTimeInformation,
 } from "../slices/navSlice";
 import { GOOGLE_MAPS_APIKEY } from "@env";
 
 const Map = () => {
   const origin = useSelector(selectOrigin);
   const destination = useSelector(selectDestination);
+  const preOrigin = useSelector(selectPreOrigin);
+  const preDestination = useSelector(selectPreDestination);
+  const preTravelTimeInformation = useSelector(selectPreTravelTimeInformation);
   const guideLocation = useSelector(selectGuideLocation);
   const mapRef = useRef();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    // if (!origin || !destination) return;
-    //Zoom and fit to Markers
-    mapRef.current.fitToSuppliedMarkers(["origin", "destination"], {
-      edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
-    });
-  }, [origin, destination]);
+  // useEffect(() => {
+  //   // if (!origin || !destination) return;
+  //   //Zoom and fit to Markers
+  //   mapRef.current.fitToSuppliedMarkers(["origin", "destination"], {
+  //     edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+  //   });
+  //   mapRef.current.fitToSuppliedMarkers(["preOrigin", "preDestination"], {
+  //     edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+  //   });
+  // }, [origin, destination, preOrigin, preDestination]);
 
   useEffect(() => {
     // console.log(guideLocation);
@@ -41,11 +50,25 @@ const Map = () => {
         .then((res) => res.json())
         .then((data) => {
           // console.log(data);
+          console.log(data.rows[0].elements[0]);
           dispatch(setTravelTimeInformation(data.rows[0].elements[0]));
         });
     };
+    console.log(preOrigin);
+    console.log(preDestination);
     getTravelTime();
   }, [origin, destination, GOOGLE_MAPS_APIKEY, guideLocation]);
+
+  const onDirectionFound = (event) => {
+    mapRef.current.fitToCoordinates(event.coordinates, {
+      edgePadding: {
+        right: 15,
+        bottom: 100,
+        left: 15,
+        top: 100,
+      },
+    });
+  };
 
   return (
     <MapView
@@ -53,8 +76,8 @@ const Map = () => {
       style={tw`flex-1`}
       mapType="mutedStandard"
       initialRegion={{
-        latitude: origin.location.lat,
-        longitude: origin.location.lng,
+        latitude: origin ? origin.location.lat : preOrigin.lat,
+        longitude: origin ? origin.location.lng : preOrigin.lng,
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       }}
@@ -74,6 +97,25 @@ const Map = () => {
           strokeColor="green"
           strokeWidth={3}
           lineDashPattern={[0]}
+          onReady={onDirectionFound}
+        />
+      )}
+      {preOrigin && preDestination && (
+        <MapViewDirections
+          origin={preOrigin.description}
+          destination={{
+            latitude: guideLocation?.guideLatitude
+              ? guideLocation.guideLatitude
+              : preDestination.lat,
+            longitude: guideLocation?.guideLongitude
+              ? guideLocation.guideLongitude
+              : preDestination.lng,
+          }}
+          apikey={GOOGLE_MAPS_APIKEY}
+          strokeColor="green"
+          strokeWidth={3}
+          lineDashPattern={[0]}
+          onReady={onDirectionFound}
         />
       )}
       {origin?.location && (
@@ -84,6 +126,17 @@ const Map = () => {
           }}
           title="Origin"
           description={origin.description}
+          identifier="origin"
+        />
+      )}
+      {preOrigin?.lat && (
+        <Marker
+          coordinate={{
+            latitude: preOrigin.lat,
+            longitude: preOrigin.lng,
+          }}
+          title="Origin"
+          description={preOrigin.description}
           identifier="origin"
         />
       )}
@@ -100,6 +153,21 @@ const Map = () => {
           }}
           title="Destination"
           description={destination.description}
+          identifier="destination"
+        />
+      )}
+      {preDestination?.lat && (
+        <Marker
+          coordinate={{
+            latitude: guideLocation?.guideLatitude
+              ? guideLocation.guideLatitude
+              : preDestination.lat,
+            longitude: guideLocation?.guideLongitude
+              ? guideLocation.guideLongitude
+              : preDestination.lng,
+          }}
+          title="Destination"
+          description={preDestination.description}
           identifier="destination"
         />
       )}

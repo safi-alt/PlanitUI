@@ -6,7 +6,11 @@ import tw from "tailwind-react-native-classnames";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { GOOGLE_MAPS_APIKEY } from "@env";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser, setDestination } from "../slices/navSlice";
+import {
+  selectDestination,
+  selectUser,
+  setDestination,
+} from "../slices/navSlice";
 import { useNavigation } from "@react-navigation/native";
 import NavFavourites from "./NavFavourites";
 import { TouchableOpacity } from "react-native";
@@ -18,6 +22,7 @@ const NavigateCard = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const userInformation = useSelector(selectUser);
+  const destination = useSelector(selectDestination);
 
   return (
     <SafeAreaView style={tw`bg-white flex-1`}>
@@ -40,11 +45,13 @@ const NavigateCard = () => {
               onPress={(data, details = null) => {
                 dispatch(
                   setDestination({
+                    ...destination,
                     location: details.geometry.location,
                     description: data.description,
                   })
                 );
-                // console.log("destination", details.geometry.location);
+                console.log("destination", details.geometry.location);
+                console.log("destination", data.description);
                 navigation.navigate("RideOptionsCard");
               }}
               query={{

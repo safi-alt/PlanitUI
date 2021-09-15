@@ -29,6 +29,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // import ImagePicker from 'react-native-image-crop-picker';
 
@@ -110,6 +111,11 @@ const EditProfileScreen = () => {
     }
   };
 
+  const editData = async (value) => {
+    await AsyncStorage.clear();
+    await AsyncStorage.setItem("@storage_Key", JSON.stringify(value));
+  };
+
   const handleEdit = async (id) => {
     console.log("edit pressed");
     console.log(id);
@@ -134,6 +140,7 @@ const EditProfileScreen = () => {
     );
     const response = await res.json();
     console.log(response);
+    editData(response);
     //storeData(response.name);
 
     if (response.token) {
@@ -146,7 +153,6 @@ const EditProfileScreen = () => {
 
       dispatch(
         setUser({
-          ...userInformation,
           name: response.name,
           phone: response.phone,
           token: response.token,

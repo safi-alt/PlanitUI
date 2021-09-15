@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { TouchableOpacity } from "react-native";
+import { Pressable, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native";
 import { StyleSheet, Text, View } from "react-native";
 import tw from "tailwind-react-native-classnames";
@@ -21,18 +21,24 @@ import {
   setGuide,
   setGuideLocation,
   selectGuideLocation,
+  setOrigin,
+  setDestination,
   setStartTrip,
+  setOrder,
+  setTravelTimeInformation,
+  setLiveOrderId,
 } from "../slices/navSlice";
 import { useDispatch } from "react-redux";
 import io from "socket.io-client";
 import ModalTrip from "./ModalTrip";
 import ModalPoup from "./ModalTrip";
 import { Rating, AirbnbRating } from "react-native-ratings";
+import moment from "moment";
 
 const data = [
   {
     id: "Uber-X-123",
-    title: "Sight Seening",
+    title: "Sight Seeing",
     multiplier: 1,
     image: "https://img.icons8.com/officel/80/26e07f/tourist-male.png",
   },
@@ -78,15 +84,12 @@ const RideOptionsCard = () => {
   const guideLocation = useSelector(selectGuideLocation);
   const [val, setVal] = useState(false);
   const [visible, setVisible] = useState(false);
-
-  let socket = io("https://planit-fyp.herokuapp.com");
+  const [orderId, setOrderId] = useState("");
 
   useEffect(() => {
     // console.log(travelTimeInformation);
+    socket = io("https://planit-fyp.herokuapp.com");
     setDuration(travelTimeInformation?.duration?.text);
-    socket.on("trip completed", (response) => {
-      setVisible(response);
-    });
 
     socket.on("guide details", (detail) => {
       // console.log(detail);
@@ -125,22 +128,70 @@ const RideOptionsCard = () => {
       );
     });
 
-    //   }, []);
-    // console.log(userInformation);
-    // console.log(originInformation);
-    // console.log(destinationInformation);
+    // socket.on("trip completed", (response) => {
+    //   // dispatch(
+    //   //   setDestination({
+    //   //     location: null,
+    //   //     description: null,
+    //   //   })
+    //   // );
+    //   setGuideLocation(null);
+    //   setGuide(null);
+    //   setOrigin(null);
+    //   setDestination(null);
+    //   setOrder(null);
+    //   setTravelTimeInformation(null);
+    //   //navigation.navigate("RideOptionsCard");
+    //   setVisible(true);
+
+    //   console.log("Hello modal");
+    // });
   }, [destinationInformation, travelTimeInformation]);
 
+  const handleEditOrder = async (id) => {
+    const res = await fetch(
+      `https://planit-fyp.herokuapp.com/api/orders/updateOrder/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          completed: true,
+        }),
+      }
+    );
+    const response = await res.json();
+    // console.log(response);
+  };
+
   const payment = (payment) => {
-    // console.log("Hello");
+    console.log("Hello");
     // console.log(paymentMethod);
     socket.emit("payment method", payment);
+    handleEditOrder(orderId);
+    setGuideLocation(null);
+    setGuide(null);
+    setOrigin(null);
+    setDestination(null);
+    setOrder(null);
+    setTravelTimeInformation(null);
+    navigation.navigate("SideNavScreen", { screen: "HomeScreen" });
   };
 
   const paymentCard = (payment) => {
-    // console.log("Hello");
+    console.log("Hello");
     // console.log(paymentMethod);
     socket.emit("payment card", payment);
+    handleEditOrder(orderId);
+    setGuideLocation(null);
+    setGuide(null);
+    setOrigin(null);
+    setDestination(null);
+    setOrder(null);
+    setTravelTimeInformation(null);
+    navigation.navigate("SideNavScreen", { screen: "HomeScreen" });
   };
 
   const handleSubmitOrder = async () => {
@@ -151,6 +202,8 @@ const RideOptionsCard = () => {
     //console.log(cost);
     // console.log(duration);
     //console.log(travelTimeInformation);
+    console.log(selected);
+    var date = moment().format("DD/MM/YYYY");
     const res = await fetch(`https://planit-fyp.herokuapp.com/api/orders/`, {
       method: "POST",
       headers: {
@@ -159,6 +212,7 @@ const RideOptionsCard = () => {
       },
       body: JSON.stringify({
         user: userInformation.id,
+        date,
         name: userInformation.name,
         phone: userInformation.phone,
         cost: finalCost[0],
@@ -170,23 +224,20 @@ const RideOptionsCard = () => {
         destLatitude: destinationInformation.location.lat,
         destLongitude: destinationInformation.location.lng,
         category: "Live",
+        distance: travelTimeInformation?.distance?.text,
+        tripType: selected.title,
       }),
     });
     const response = await res.json();
+    setOrderId(response.data._id);
+    dispatch(
+      setLiveOrderId({
+        orderId: response.data._id,
+      })
+    );
+
     //console.log(response);
     socket.emit("order details", response);
-    let payment = "cash";
-    socket.emit("payment method", payment);
-    // socket.emit("order details", {
-    //   Name: response.data.name,
-    //   Phone: response.data.phone,
-    //   Origin: response.data.origin,
-    //   Destination: response.data.destination,
-    //   OriginLatitude: response.data.originlatitude,
-    //   OriginLongitude: response.data.originLongitude,
-    //   DestLatitude: response.data.destLatitude,
-    //   DestLongitude: response.data.destLongitude,
-    // });
   };
 
   return (
@@ -330,7 +381,7 @@ const RideOptionsCard = () => {
   );
 };
 
-export default RideOptionsCard;
+export default React.memo(RideOptionsCard);
 
 const styles = StyleSheet.create({
   modalBackGround: {

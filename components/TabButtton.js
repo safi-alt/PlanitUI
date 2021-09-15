@@ -2,18 +2,31 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Colors from "../constants/Colors";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const TabButtton = (props) => {
   const navigation = useNavigation();
+
+  const _removeData = async () => {
+    try {
+      await AsyncStorage.clear();
+      console.log("item removed");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <TouchableOpacity
       onPress={() => {
         if (props.title == "LogOut") {
           // Do your Stuff...
+          _removeData();
+          navigation.navigate("AuthScreen", { screen: "SignInScreen" });
         } else {
           props.setCurrentTab(props.title);
           navigation.navigate({ name: props.nav });
+          // console.log("Logout");
         }
       }}
     >

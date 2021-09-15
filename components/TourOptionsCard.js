@@ -1,11 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { SafeAreaView, Dimensions } from "react-native";
 import { StyleSheet, Text, View, Image } from "react-native";
 import { Avatar, Icon, ListItem } from "react-native-elements";
 import { TouchableOpacity } from "react-native";
 import tw from "tailwind-react-native-classnames";
-import { useSelector } from "react-redux";
-import { selectTravelTimeInformation } from "../slices/navSlice";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectPreBookGuide,
+  selectTravelTimeInformation,
+} from "../slices/navSlice";
 import ChatScreen from "../screens/ChatScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Pressable } from "react-native";
@@ -14,24 +17,348 @@ import Colors from "../constants/Colors";
 const { width } = Dimensions.get("screen");
 import profile from "../assets/safi.jpg";
 import {
+  selectOrigin,
+  selectDestination,
   setOrigin,
   setDestination,
   selectUser,
   selectGuide,
+  selectPreTravelTimeInformation,
+  setGuideLocation,
+  selectGuideLocation,
+  selectPreBookOrderId,
+  setPreDestination,
+  setPreOrigin,
+  setPreTravelTimeInformation,
+  setPreBookGuide,
+  setPreBookOrderId,
+  selectLiveOrderId,
+  setLiveOrderId,
+  setGuide,
+  setOrder,
+  selectPreOrigin,
+  selectPreDestination,
+  setTravelTimeInformation,
 } from "../slices/navSlice";
+import ModalPoup from "./ModalTrip";
+import { Rating, AirbnbRating } from "react-native-ratings";
+import io from "socket.io-client";
 
 const TourOptionsCard = () => {
   const Stack = createStackNavigator();
+  const origin = useSelector(selectOrigin);
+  const destination = useSelector(selectDestination);
+  const preOrigin = useSelector(selectPreOrigin);
+  const preDestination = useSelector(selectPreDestination);
   const travelTimeInformation = useSelector(selectTravelTimeInformation);
+  const preTravelTimeInformation = useSelector(selectPreTravelTimeInformation);
+  const preBookGuideInformation = useSelector(selectPreBookGuide);
+  const guideLocation = useSelector(selectGuideLocation);
   const navigation = useNavigation();
   const guideInformation = useSelector(selectGuide);
+  const dispatch = useDispatch();
+  const [visible, setVisible] = useState(false);
+  const preOrderId = useSelector(selectPreBookOrderId);
+  const liveOrderId = useSelector(selectLiveOrderId);
+
+  const handleEditOrder = async (id) => {
+    const res = await fetch(
+      `https://planit-fyp.herokuapp.com/api/orders/updateOrder/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          completed: true,
+        }),
+      }
+    );
+    const response = await res.json();
+    console.log(response);
+    // socket.emit("order details", {
+    //   Name: response.data.name,
+    //   Phone: response.data.phone,
+    //   Origin: response.data.origin,
+    //   Destination: response.data.destination,
+    //   OriginLatitude: response.data.originlatitude,
+    //   OriginLongitude: response.data.originLongitude,
+    //   DestLatitude: response.data.destLatitude,
+    //   DestLongitude: response.data.destLongitude,
+    // });
+  };
 
   useEffect(() => {
+    //console.log("Hello");
     // console.log(userInformation);
     // console.log(guideInformation);
     // console.log("Hello");
     // console.log(userInformation.avatar);
+    console.log(preOrderId);
+    socket = io("https://planit-fyp.herokuapp.com");
+    socket.on("final Posiiton", (location) => {
+      dispatch(
+        setGuideLocation({
+          ...guideLocation,
+          guideLatitude: false,
+          guideLongitude: false,
+        })
+      );
+    });
+    socket.on("trip completed", (response) => {
+      // dispatch(
+      //   setDestination({
+      //     location: null,
+      //     description: null,
+      //   })
+      // );
+
+      setVisible(true);
+    });
   }, []);
+
+  const payment = async (payment) => {
+    console.log("Hello");
+    // console.log(paymentMethod);
+    socket.emit("payment method", payment);
+    console.log(preOrderId);
+
+    liveOrderId?.orderId
+      ? handleEditOrder(liveOrderId.orderId)
+      : handleEditOrder(preOrderId.orderId);
+    liveOrderId.orderId
+      ? dispatch(
+          setDestination({
+            ...destination,
+            location: {
+              lat: destination.location.lat,
+              lng: destination.location.lng,
+            },
+
+            description: destination.description,
+          })
+        )
+      : dispatch(
+          setDestination({
+            ...destination,
+            location: {
+              lat: preDestination.lat,
+              lng: preDestination.lng,
+            },
+
+            description: preDestination.description,
+          })
+        );
+    liveOrderId
+      ? dispatch(
+          setOrigin({
+            ...origin,
+            location: {
+              lat: destination.location.lat,
+              lng: destination.location.lng,
+            },
+            description: destination.description,
+          })
+        )
+      : dispatch(
+          setOrigin({
+            ...origin,
+            location: {
+              lat: preOrigin.lat,
+              lng: preOrigin.lng,
+            },
+            description: preOrigin.description,
+          })
+        );
+    dispatch(
+      setPreOrigin({
+        ...preOrigin,
+        lat: null,
+        lng: null,
+        description: null,
+      })
+    );
+    dispatch(
+      setPreDestination({
+        ...preDestination,
+        lat: null,
+        lng: null,
+        description: null,
+      })
+    );
+    dispatch(
+      setPreTravelTimeInformation({
+        ...preTravelTimeInformation,
+        distance: null,
+        duration: null,
+      })
+    );
+    dispatch(
+      setPreBookGuide({
+        ...preBookGuideInformation,
+        guideName: null,
+        guidePhone: null,
+      })
+    );
+    dispatch(
+      setGuideLocation({
+        ...guideLocation,
+        guideLatitude: null,
+        guideLongitude: null,
+      })
+    );
+    // dispatch(
+    //   setOrigin({
+    //     ...origin,
+    //     location: null,
+    //     description: null,
+    //   })
+    // );
+    dispatch(
+      setTravelTimeInformation({
+        ...travelTimeInformation,
+        travelTimeInformation: null,
+      })
+    );
+    dispatch(
+      setGuide({
+        ...guideInformation,
+        guideName: null,
+        guidePhone: null,
+      })
+    );
+    dispatch(
+      setLiveOrderId({
+        ...liveOrderId,
+        orderId: null,
+      })
+    );
+
+    dispatch(
+      setPreBookOrderId({
+        ...preOrderId,
+        orderId: null,
+      })
+    );
+
+    navigation.navigate("SideNavScreen", { screen: "HomeScreen" });
+  };
+
+  const paymentCard = async (payment) => {
+    console.log("Hello");
+    // console.log(paymentMethod);
+    socket.emit("payment card", payment);
+    liveOrderId?.orderId
+      ? handleEditOrder(liveOrderId.orderId)
+      : handleEditOrder(preOrderId.orderId);
+
+    liveOrderId.orderId
+      ? dispatch(
+          setDestination({
+            ...destination,
+            location: {
+              lat: destination.location.lat,
+              lng: destination.location.lng,
+            },
+
+            description: destination.description,
+          })
+        )
+      : dispatch(
+          setDestination({
+            ...destination,
+            location: {
+              lat: preDestination.lat,
+              lng: preDestination.lng,
+            },
+
+            description: preDestination.description,
+          })
+        );
+    liveOrderId
+      ? dispatch(
+          setOrigin({
+            ...origin,
+            location: {
+              lat: destination.location.lat,
+              lng: destination.location.lng,
+            },
+            description: destination.description,
+          })
+        )
+      : dispatch(
+          setOrigin({
+            ...origin,
+            location: {
+              lat: preOrigin.lat,
+              lng: preOrigin.lng,
+            },
+            description: preOrigin.description,
+          })
+        );
+
+    dispatch(
+      setPreOrigin({
+        ...preOrigin,
+        lat: null,
+        lng: null,
+        description: null,
+      })
+    );
+    dispatch(
+      setPreDestination({
+        ...preDestination,
+        lat: null,
+        lng: null,
+        description: null,
+      })
+    );
+    dispatch(
+      setPreTravelTimeInformation({
+        ...preTravelTimeInformation,
+        distance: null,
+        duration: null,
+      })
+    );
+    dispatch(
+      setPreBookGuide({
+        ...preBookGuideInformation,
+        guideName: null,
+        guidePhone: null,
+      })
+    );
+    dispatch(
+      setGuideLocation({
+        ...guideLocation,
+        guideLatitude: null,
+        guideLongitude: null,
+      })
+    );
+    //dispatch(...travelTimeInformation, setTravelTimeInformation(null));
+    dispatch(
+      setGuide({
+        ...guideInformation,
+        guideName: null,
+        guidePhone: null,
+      })
+    );
+    dispatch(
+      setLiveOrderId({
+        ...liveOrderId,
+        orderId: null,
+      })
+    );
+
+    dispatch(
+      setPreBookOrderId({
+        ...preOrderId,
+        orderId: null,
+      })
+    );
+
+    navigation.navigate("SideNavScreen", { screen: "HomeScreen" });
+  };
 
   return (
     <SafeAreaView style={tw`bg-white flex-grow`}>
@@ -42,9 +369,16 @@ const TourOptionsCard = () => {
         >
           <Icon name="chevron-left" type="fontawesome" />
         </TouchableOpacity>
-        <Text style={tw`text-center py-5 text-xl`}>
-          Your Ride Details - {travelTimeInformation?.distance?.text}
-        </Text>
+        {travelTimeInformation?.distance && (
+          <Text style={tw`text-center py-5 text-xl`}>
+            Your Ride Details - {travelTimeInformation?.distance?.text}
+          </Text>
+        )}
+        {preTravelTimeInformation?.distance && (
+          <Text style={tw`text-center py-5 text-xl`}>
+            Your Ride Details - {preTravelTimeInformation?.distance}
+          </Text>
+        )}
       </View>
 
       {/* <View style={tw``}>
@@ -84,12 +418,26 @@ const TourOptionsCard = () => {
           </View>
 
           {/* Location text */}
-          <Text style={{ fontSize: 16, color: Colors.primary }}>
-            Name: {guideInformation.guideName}
-          </Text>
-          <Text style={{ fontSize: 16, color: Colors.primary }}>
-            Phone: {guideInformation.guidePhone}
-          </Text>
+          {guideInformation && (
+            <Text style={{ fontSize: 16, color: Colors.primary }}>
+              Name: {guideInformation.guideName}
+            </Text>
+          )}
+          {guideInformation && (
+            <Text style={{ fontSize: 16, color: Colors.primary }}>
+              Phone: {guideInformation.guidePhone}
+            </Text>
+          )}
+          {preBookGuideInformation && (
+            <Text style={{ fontSize: 16, color: Colors.primary }}>
+              Phone: {preBookGuideInformation.guideName}
+            </Text>
+          )}
+          {preBookGuideInformation && (
+            <Text style={{ fontSize: 16, color: Colors.primary }}>
+              Phone: {preBookGuideInformation.guidePhone}
+            </Text>
+          )}
 
           {/* Facilities container */}
           <View style={{ flexDirection: "row", marginTop: 20 }}>
@@ -148,6 +496,54 @@ const TourOptionsCard = () => {
           </TouchableOpacity>
         </View>
       </View>
+      <ModalPoup visible={visible}>
+        <View style={{ alignItems: "center" }}>
+          <View style={style.headerPopup}>
+            <TouchableOpacity onPress={() => setVisible(false)}>
+              <Image
+                source={require("../assets/x.png")}
+                style={{ height: 30, width: 30 }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{ alignItems: "center" }}>
+          <Image
+            source={require("../assets/success.png")}
+            style={{ height: 150, width: 150, marginVertical: 10 }}
+          />
+        </View>
+
+        <Text style={{ marginVertical: 30, fontSize: 20, textAlign: "center" }}>
+          Congratulations trip was successful
+        </Text>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            marginTop: 5,
+          }}
+        >
+          <TouchableOpacity
+            style={style.commandButton}
+            onPress={() => {
+              paymentCard("card");
+            }}
+          >
+            <Text style={style.panelButtonTitle}>Cash</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={style.commandButton}
+            onPress={() => {
+              payment("cash");
+            }}
+          >
+            <Text style={style.panelButtonTitle}>Card</Text>
+          </TouchableOpacity>
+        </View>
+        <AirbnbRating />
+      </ModalPoup>
     </SafeAreaView>
   );
 };
@@ -234,5 +630,37 @@ const style = StyleSheet.create({
     paddingVertical: 20,
     justifyContent: "space-between",
     marginVertical: 10,
+  },
+  modalBackGround: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    width: "80%",
+    backgroundColor: "white",
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+    borderRadius: 20,
+    elevation: 20,
+  },
+  headerPopup: {
+    width: "100%",
+    height: 40,
+    alignItems: "flex-end",
+    justifyContent: "center",
+  },
+  commandButton: {
+    padding: 15,
+    borderRadius: 10,
+    backgroundColor: Colors.primary,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  panelButtonTitle: {
+    fontSize: 17,
+    fontWeight: "bold",
+    color: "white",
   },
 });

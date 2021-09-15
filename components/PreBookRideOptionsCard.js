@@ -30,7 +30,7 @@ import io from "socket.io-client";
 const data = [
   {
     id: "Uber-X-123",
-    title: "Sight Seening",
+    title: "Sight Seeing",
     multiplier: 1,
     image: "https://img.icons8.com/officel/80/26e07f/tourist-male.png",
   },
@@ -79,7 +79,8 @@ const PreBookRideOptionsCard = () => {
   let socket = io("https://planit-fyp.herokuapp.com");
 
   useEffect(() => {
-    console.log(travelTimeInformation);
+    console.log(userInformation);
+    //console.log(travelTimeInformation);
     setDuration(travelTimeInformation?.duration?.text);
     // socket.on("guide details", (detail) => {
     //   // console.log(detail);
@@ -149,6 +150,8 @@ const PreBookRideOptionsCard = () => {
         destLatitude: destinationInformation.location.lat,
         destLongitude: destinationInformation.location.lng,
         category: "prebook",
+        distance: travelTimeInformation?.distance?.text,
+        tripType: isSelect.title,
       }),
     });
     const response = await res.json();

@@ -62,9 +62,39 @@ const Payments = () => {
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvc, setCvc] = useState("");
+  const [data, setData] = React.useState([]);
+
+  const getData = async (id) => {
+    // value previously stored
+    // console.log(value);
+    //const val = JSON.parse(value);
+    //const userId = val.id;
+    const res = await fetch(
+      `https://planit-fyp.herokuapp.com/api/orders/getUserOrders/${id}`
+    );
+    const response = await res.json();
+    console.log(response);
+    // console.log(response.data);
+    // const orders = response.data.map((x) => x);
+    // console.log(orders);
+    const orders = response.userOrders.map((x) => {
+      return {
+        key: x._id,
+        image: x.avatar,
+        name: x.guideName,
+        phone: x.phone,
+        origin: x.origin,
+        destination: x.destination,
+        cost: x.cost,
+      };
+    });
+    //console.log(orders);
+    setData(orders);
+  };
 
   useEffect(() => {
     setUser(userInformation.id);
+    getData(userInformation.id);
     // console.log(paymentInformation);
     // console.log(paymentInformation);
     //getPayment(userInformation.id);
@@ -159,7 +189,7 @@ const Payments = () => {
             blurRadius={10}
           />
           <Animated.FlatList
-            data={DATA}
+            data={data}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
               { useNativeDriver: true }
@@ -212,7 +242,7 @@ const Payments = () => {
                   }}
                 >
                   <Image
-                    source={{ uri: item.image }}
+                    source={{ uri: userInformation.avatar }}
                     style={{
                       width: AVATAR_SIZE,
                       height: AVATAR_SIZE,
@@ -225,7 +255,7 @@ const Payments = () => {
                       {item.name}
                     </Text>
                     <Text style={{ fontSize: 16, opacity: 0.7, flexShrink: 1 }}>
-                      {item.jobTitle}
+                      {item.origin}
                     </Text>
                     <Text
                       style={{
@@ -235,7 +265,17 @@ const Payments = () => {
                         flexWrap: "wrap",
                       }}
                     >
-                      {item.email}
+                      {item.destination}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        opacity: 0.7,
+                        color: "#0099cc",
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      {item.cost}
                     </Text>
                   </View>
                 </Animated.View>

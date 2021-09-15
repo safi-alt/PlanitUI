@@ -38,6 +38,7 @@ import payments from "../assets/paymentInfo.png";
 import preBookTrips from "../assets/preBookTrips.png";
 import Payments from "./Payments";
 import PreBookNavigator from "./PreBookNavigator";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SideNavScreen = () => {
   const Stack = createStackNavigator();
@@ -45,6 +46,8 @@ const SideNavScreen = () => {
   // To get the curretn Status of menu ...
   const [showMenu, setShowMenu] = useState(false);
   const userInformation = useSelector(selectUser);
+  const [name, setName] = useState("");
+  const [avatar, setAvatar] = useState("");
 
   // Animated Properties...
 
@@ -53,35 +56,75 @@ const SideNavScreen = () => {
   const scaleValue = useRef(new Animated.Value(1)).current;
   const closeButtonOffset = useRef(new Animated.Value(0)).current;
 
+  // const getData = async () => {
+  //   try {
+  //     console.log(userInformation);
+  //     const value = await AsyncStorage.getItem("@storage_Key");
+  //     const obj = JSON.parse(value);
+  //     console.log(obj);
+  //     setName(obj.name);
+  //     setAvatar(obj.avatar);
+  //   } catch (e) {
+  //     // error reading value
+  //   }
+  // };
+
   useEffect(() => {
     // console.log(userInformation);
-    console.log(userInformation);
-    console.log(typeof userInformation.avatar);
+    //getData();
+    console.log("Hello");
+    //console.log(userInformation);
   }, []);
-
+  //https://image.flaticon.com/icons/png/256/435/435041.png
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ justifyContent: "flex-start", padding: 15 }}>
-        <Image
-          source={{ uri: userInformation.avatar }}
-          style={{
-            width: 60,
-            height: 60,
-            borderRadius: 10,
-            marginTop: 8,
-          }}
-        ></Image>
-
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: "bold",
-            color: "white",
-            marginTop: 20,
-          }}
-        >
-          {userInformation.name}
-        </Text>
+        {userInformation?.avatar ? (
+          <Image
+            source={{ uri: userInformation.avatar }}
+            style={{
+              width: 60,
+              height: 60,
+              borderRadius: 10,
+              marginTop: 8,
+            }}
+          ></Image>
+        ) : (
+          <Image
+            source={{
+              uri: "https://image.flaticon.com/icons/png/256/435/435041.png",
+            }}
+            style={{
+              width: 60,
+              height: 60,
+              borderRadius: 10,
+              marginTop: 8,
+            }}
+          ></Image>
+        )}
+        {userInformation?.name ? (
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "bold",
+              color: "white",
+              marginTop: 20,
+            }}
+          >
+            {userInformation.name}
+          </Text>
+        ) : (
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "bold",
+              color: "white",
+              marginTop: 20,
+            }}
+          >
+            Taimoor
+          </Text>
+        )}
 
         <TouchableOpacity>
           <Text

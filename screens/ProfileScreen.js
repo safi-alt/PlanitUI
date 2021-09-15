@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, SafeAreaView, StyleSheet } from "react-native";
 import {
   Avatar,
@@ -15,32 +15,77 @@ import Colors from "../constants/Colors";
 import { setOrigin, setDestination, selectUser } from "../slices/navSlice";
 import { useSelector } from "react-redux";
 import profile from "../assets/safi.jpg";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // import Share from 'react-native-share';
 
 // import files from '../assets/filesBase64';
 
 const ProfileScreen = () => {
-  // const myCustomShare = async() => {
-  //   const shareOptions = {
-  //     message: 'Order your next meal from FoodFinder App. I\'ve already ordered more than 10 meals on it.',
-  //     url: files.appLogo,
-  //     // urls: [files.image1, files.image2]
-  //   }
-
-  //   try {
-  //     const ShareResponse = await Share.open(shareOptions);
-  //     console.log(JSON.stringify(ShareResponse));
-  //   } catch(error) {
-  //     console.log('Error => ', error);
-  //   }
-  // };
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [ordersLength, setOrdersLength] = useState(0);
+  const [earnings, setEarnings] = useState(0);
   const userInformation = useSelector(selectUser);
+
+  const getData = async () => {
+    console.log("Hello wrold");
+    const value = await AsyncStorage.getItem("@storage_Key");
+
+    // value previously stored
+    // console.log(value);
+    const val = JSON.parse(value);
+    const userId = userInformation.id;
+    const res = await fetch(
+      `https://planit-fyp.herokuapp.com/api/orders/getUserOrders/${userId}`
+    );
+    const response = await res.json();
+    setOrdersLength(response.userOrders.length);
+
+    // console.log('Helloo');
+  };
+
+  const getTransactions = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@storage_Key");
+      if (userInformation.token) {
+        // value previously stored
+        // console.log(value);
+        const val = JSON.parse(value);
+        const userId = userInformation.id;
+        console.log(userId);
+        const res = await fetch(
+          `https://planit-fyp.herokuapp.com/api/transaction/getUserTransaction/${userId}`
+        );
+        const response = await res.json();
+        console.log(response);
+        //console.log(response.filterTransaction);
+        let moneyArray = response.filterTransaction.map((x) => Number(x.cost));
+        let earnings = moneyArray.reduce((a, b) => Math.round(a + b), 0);
+        setEarnings(earnings);
+
+        //setEarnings(response.cost);
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
+
+  // useEffect(() => {
+  //   getData();
+  //   //getTransactions();
+  //   console.log(userInformation.id);
+  //   // console.log('Hello world');
+  // });
   //file:///storage/emulated/0/Android/data/com.driverapp/files/Pictures/00b12f50-8ba1-4856-96ff-b0f3eebaebdb.jpg
   // const [image, setImage] = React.useState(userInformation.avatar);
   const [image, setImage] = React.useState(userInformation.avatar);
   React.useEffect(() => {
+    //console.log(userInformation);
     setImage(userInformation.avatar);
+    getData();
+    getTransactions();
   }, [userInformation]);
 
   return (
@@ -101,11 +146,11 @@ const ProfileScreen = () => {
             },
           ]}
         >
-          <Title>₹140.50</Title>
+          <Title>Rs.{earnings}</Title>
           <Caption>Wallet</Caption>
         </View>
         <View style={styles.infoBox}>
-          <Title>12</Title>
+          <Title>{ordersLength}</Title>
           <Caption>Trips</Caption>
         </View>
       </View>

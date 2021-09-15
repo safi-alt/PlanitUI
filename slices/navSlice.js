@@ -10,6 +10,12 @@ const initialState = {
   startTrip: null,
   order: null,
   payment: null,
+  preOrigin: null,
+  preDestination: null,
+  preTravelTimeInformation: null,
+  preBookGuide: null,
+  preBookOrderId: null,
+  liveOrderId: null,
 };
 
 export const navSlice = createSlice({
@@ -43,6 +49,24 @@ export const navSlice = createSlice({
     setPayment: (state, action) => {
       state.payment = action.payload;
     },
+    setPreOrigin: (state, action) => {
+      state.preOrigin = action.payload;
+    },
+    setPreDestination: (state, action) => {
+      state.preDestination = action.payload;
+    },
+    setPreTravelTimeInformation: (state, action) => {
+      state.preTravelTimeInformation = action.payload;
+    },
+    setPreBookGuide: (state, action) => {
+      state.preBookGuide = action.payload;
+    },
+    setPreBookOrderId: (state, action) => {
+      state.preBookOrderId = action.payload;
+    },
+    setLiveOrderId: (state, action) => {
+      state.liveOrderId = action.payload;
+    },
   },
 });
 
@@ -56,6 +80,12 @@ export const {
   setStartTrip,
   setOrder,
   setPayment,
+  setPreDestination,
+  setPreOrigin,
+  setPreTravelTimeInformation,
+  setPreBookGuide,
+  setPreBookOrderId,
+  setLiveOrderId,
 } = navSlice.actions;
 
 // Slectors
@@ -70,5 +100,12 @@ export const selectGuideLocation = (state) => state.nav.guideLocation;
 export const selectStartTrip = (state) => state.nav.startTrip;
 export const selectOrder = (state) => state.nav.order;
 export const selectPayment = (state) => state.nav.payment;
+export const selectPreOrigin = (state) => state.nav.preOrigin;
+export const selectPreDestination = (state) => state.nav.preDestination;
+export const selectPreTravelTimeInformation = (state) =>
+  state.nav.preTravelTimeInformation;
+export const selectPreBookGuide = (state) => state.nav.preBookGuide;
+export const selectPreBookOrderId = (state) => state.nav.preBookOrderId;
+export const selectLiveOrderId = (state) => state.nav.liveOrderId;
 
 export default navSlice.reducer;
