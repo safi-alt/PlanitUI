@@ -6,6 +6,8 @@ import {
   ImageBackground,
   TextInput,
   StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 
 import { useTheme } from "react-native-paper";
@@ -17,7 +19,6 @@ import Feather from "react-native-vector-icons/Feather";
 import BottomSheet from "reanimated-bottom-sheet";
 import Animated from "react-native-reanimated";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { Platform } from "react-native";
 import Colors from "../constants/Colors";
 import {
   setOrigin,
@@ -119,6 +120,7 @@ const EditProfileScreen = () => {
           city: response.city,
           country: response.country,
           avatar: response.avatar,
+          id: response._id,
         })
       );
       alert("User Updated");
@@ -248,11 +250,10 @@ const EditProfileScreen = () => {
             {userInformation.name}
           </Text>
         </View>
-
         <View style={styles.action}>
           <FontAwesome name="user-o" color={colors.text} size={20} />
           <TextInput
-            placeholder="Last Name"
+            placeholder="Name"
             value={name}
             onChangeText={(name) => {
               setName(name);

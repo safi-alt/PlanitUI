@@ -1,9 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 // import MapView, { Marker } from "react-native-maps";
+// import MapViewDirections from "react-native-maps-directions";
 import MapView, { Marker } from "react-native-maps";
-// import MapViewDirections from "react-native-maps-directions";
-// import MapViewDirections from "react-native-maps-directions";
 import MapViewDirections from "react-native-maps-directions";
 import { useSelector, useDispatch } from "react-redux";
 import tw from "tailwind-react-native-classnames";
@@ -17,6 +16,7 @@ import {
   selectPreTravelTimeInformation,
   selectTravelTimeInformation,
 } from "../slices/navSlice";
+// import { GOOGLE_MAPS_APIKEY } from "@env";
 import { GOOGLE_MAPS_APIKEY } from "@env";
 
 const Map = () => {

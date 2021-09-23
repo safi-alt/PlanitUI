@@ -8,6 +8,7 @@ import {
   Animated,
   Dimensions,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import {
   CreditCardInput,
@@ -31,6 +32,7 @@ import {
 
 const { width, height } = Dimensions.get("screen");
 import faker from "faker";
+import ModalPoup from "../components/ModalTrip";
 // import {Title} from 'react-native-paper';
 
 faker.seed(10);
@@ -63,6 +65,7 @@ const Payments = () => {
   const [expiry, setExpiry] = useState("");
   const [cvc, setCvc] = useState("");
   const [data, setData] = React.useState([]);
+  const [showModal, setShowModal] = React.useState(false);
 
   const getData = async (id) => {
     const res = await fetch(
@@ -103,6 +106,7 @@ const Payments = () => {
       }),
     });
     const response = await res.json();
+    setShowModal(true);
   };
 
   const onChange = (form) => {
@@ -139,7 +143,12 @@ const Payments = () => {
           >
             <Text style={styles.panelButtonTitle}>Submit</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.commandButton} onPress={() => {}}>
+          <TouchableOpacity
+            style={styles.commandButton}
+            onPress={() => {
+              setShowModal(true);
+            }}
+          >
             <Text style={styles.panelButtonTitle}>Change</Text>
           </TouchableOpacity>
         </View>
@@ -260,6 +269,28 @@ const Payments = () => {
           <StatusBar hidden />
         </View>
       </View>
+      <ModalPoup visible={showModal}>
+        <View style={{ alignItems: "center" }}>
+          <View style={styles.modalHeader}>
+            <TouchableOpacity onPress={() => setShowModal(false)}>
+              <Image
+                source={require("../assets/x.png")}
+                style={{ height: 30, width: 30 }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{ alignItems: "center" }}>
+          <Image
+            source={require("../assets/success.png")}
+            style={{ height: 150, width: 150, marginVertical: 10 }}
+          />
+        </View>
+
+        <Text style={{ marginVertical: 30, fontSize: 20, textAlign: "center" }}>
+          Congratulations Card Accepted
+        </Text>
+      </ModalPoup>
     </View>
   );
 };
@@ -278,5 +309,12 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "bold",
     color: "white",
+  },
+  modalHeader: {
+    width: 30,
+    height: 30,
+    position: "absolute",
+    top: 10,
+    right: 10,
   },
 });
