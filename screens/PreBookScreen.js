@@ -208,7 +208,6 @@ const PreBookScreen = () => {
                 description: data.description,
               })
             );
-            console.log("destination", details.geometry.location);
             navigation.navigate("PreBookMapScreen");
           }}
           query={{

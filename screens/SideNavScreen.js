@@ -56,26 +56,10 @@ const SideNavScreen = () => {
   const scaleValue = useRef(new Animated.Value(1)).current;
   const closeButtonOffset = useRef(new Animated.Value(0)).current;
 
-  // const getData = async () => {
-  //   try {
-  //     console.log(userInformation);
-  //     const value = await AsyncStorage.getItem("@storage_Key");
-  //     const obj = JSON.parse(value);
-  //     console.log(obj);
-  //     setName(obj.name);
-  //     setAvatar(obj.avatar);
-  //   } catch (e) {
-  //     // error reading value
-  //   }
-  // };
-
   useEffect(() => {
-    // console.log(userInformation);
-    //getData();
     console.log("Hello");
-    //console.log(userInformation);
   }, []);
-  //https://image.flaticon.com/icons/png/256/435/435041.png
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ justifyContent: "flex-start", padding: 15 }}>

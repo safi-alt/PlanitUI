@@ -29,7 +29,6 @@ import {
   selectPreBookOrderId,
   setPreDestination,
   setPreOrigin,
-  setPreTravelTimeInformation,
   setPreBookGuide,
   setPreBookOrderId,
   selectLiveOrderId,
@@ -39,6 +38,8 @@ import {
   selectPreOrigin,
   selectPreDestination,
   setTravelTimeInformation,
+  setPreTravelTimeInformation,
+  selectPreGuidePhone,
 } from "../slices/navSlice";
 import ModalPoup from "./ModalTrip";
 import { Rating, AirbnbRating } from "react-native-ratings";
@@ -60,6 +61,9 @@ const TourOptionsCard = () => {
   const [visible, setVisible] = useState(false);
   const preOrderId = useSelector(selectPreBookOrderId);
   const liveOrderId = useSelector(selectLiveOrderId);
+  const phonePreGuide = useSelector(selectPreGuidePhone);
+  const [live, setLive] = useState("");
+  const [pre, setPre] = useState("");
 
   const handleEditOrder = async (id) => {
     const res = await fetch(
@@ -76,26 +80,13 @@ const TourOptionsCard = () => {
       }
     );
     const response = await res.json();
-    console.log(response);
-    // socket.emit("order details", {
-    //   Name: response.data.name,
-    //   Phone: response.data.phone,
-    //   Origin: response.data.origin,
-    //   Destination: response.data.destination,
-    //   OriginLatitude: response.data.originlatitude,
-    //   OriginLongitude: response.data.originLongitude,
-    //   DestLatitude: response.data.destLatitude,
-    //   DestLongitude: response.data.destLongitude,
-    // });
+    setLive("");
+    setPre("");
   };
 
   useEffect(() => {
-    //console.log("Hello");
-    // console.log(userInformation);
-    // console.log(guideInformation);
-    // console.log("Hello");
-    // console.log(userInformation.avatar);
-    console.log(preOrderId);
+    setLive(liveOrderId?.orderId);
+    setPre(preOrderId?.orderId);
     socket = io("https://planit-fyp.herokuapp.com");
     socket.on("final Posiiton", (location) => {
       dispatch(
@@ -107,27 +98,16 @@ const TourOptionsCard = () => {
       );
     });
     socket.on("trip completed", (response) => {
-      // dispatch(
-      //   setDestination({
-      //     location: null,
-      //     description: null,
-      //   })
-      // );
-
       setVisible(true);
     });
   }, []);
 
   const payment = async (payment) => {
-    console.log("Hello");
-    // console.log(paymentMethod);
     socket.emit("payment method", payment);
-    console.log(preOrderId);
 
-    liveOrderId?.orderId
-      ? handleEditOrder(liveOrderId.orderId)
-      : handleEditOrder(preOrderId.orderId);
-    liveOrderId.orderId
+    if (live) handleEditOrder(live);
+    else handleEditOrder(pre);
+    liveOrderId !== null
       ? dispatch(
           setDestination({
             ...destination,
@@ -150,7 +130,7 @@ const TourOptionsCard = () => {
             description: preDestination.description,
           })
         );
-    liveOrderId
+    liveOrderId !== null
       ? dispatch(
           setOrigin({
             ...origin,
@@ -194,6 +174,13 @@ const TourOptionsCard = () => {
         duration: null,
       })
     );
+    // dispatch(
+    //   setTravelTimeInformation({
+    //     ...travelTimeInformation,
+    //     distance: null,
+    //     duration: null,
+    //   })
+    // );
     dispatch(
       setPreBookGuide({
         ...preBookGuideInformation,
@@ -215,12 +202,6 @@ const TourOptionsCard = () => {
     //     description: null,
     //   })
     // );
-    dispatch(
-      setTravelTimeInformation({
-        ...travelTimeInformation,
-        travelTimeInformation: null,
-      })
-    );
     dispatch(
       setGuide({
         ...guideInformation,
@@ -246,14 +227,11 @@ const TourOptionsCard = () => {
   };
 
   const paymentCard = async (payment) => {
-    console.log("Hello");
-    // console.log(paymentMethod);
     socket.emit("payment card", payment);
-    liveOrderId?.orderId
-      ? handleEditOrder(liveOrderId.orderId)
-      : handleEditOrder(preOrderId.orderId);
+    if (live) handleEditOrder(live);
+    else handleEditOrder(pre);
 
-    liveOrderId.orderId
+    liveOrderId !== null
       ? dispatch(
           setDestination({
             ...destination,
@@ -276,7 +254,7 @@ const TourOptionsCard = () => {
             description: preDestination.description,
           })
         );
-    liveOrderId
+    liveOrderId !== null
       ? dispatch(
           setOrigin({
             ...origin,
@@ -321,6 +299,13 @@ const TourOptionsCard = () => {
         duration: null,
       })
     );
+    // dispatch(
+    //   setTravelTimeInformation({
+    //     ...travelTimeInformation,
+    //     distance: null,
+    //     duration: null,
+    //   })
+    // );
     dispatch(
       setPreBookGuide({
         ...preBookGuideInformation,
@@ -369,12 +354,12 @@ const TourOptionsCard = () => {
         >
           <Icon name="chevron-left" type="fontawesome" />
         </TouchableOpacity>
-        {travelTimeInformation?.distance && (
+        {travelTimeInformation?.distance && liveOrderId !== null && (
           <Text style={tw`text-center py-5 text-xl`}>
             Your Ride Details - {travelTimeInformation?.distance?.text}
           </Text>
         )}
-        {preTravelTimeInformation?.distance && (
+        {preTravelTimeInformation?.distance && preOrderId !== null && (
           <Text style={tw`text-center py-5 text-xl`}>
             Your Ride Details - {preTravelTimeInformation?.distance}
           </Text>
@@ -418,24 +403,24 @@ const TourOptionsCard = () => {
           </View>
 
           {/* Location text */}
-          {guideInformation && (
+          {guideInformation && liveOrderId !== null && (
             <Text style={{ fontSize: 16, color: Colors.primary }}>
               Name: {guideInformation.guideName}
             </Text>
           )}
-          {guideInformation && (
+          {guideInformation && liveOrderId !== null && (
             <Text style={{ fontSize: 16, color: Colors.primary }}>
               Phone: {guideInformation.guidePhone}
             </Text>
           )}
-          {preBookGuideInformation && (
+          {preBookGuideInformation && preOrderId !== null && (
             <Text style={{ fontSize: 16, color: Colors.primary }}>
-              Phone: {preBookGuideInformation.guideName}
+              Name: {preBookGuideInformation.guideName}
             </Text>
           )}
-          {preBookGuideInformation && (
+          {preBookGuideInformation && preOrderId !== null && (
             <Text style={{ fontSize: 16, color: Colors.primary }}>
-              Phone: {preBookGuideInformation.guidePhone}
+              Phone: {phonePreGuide?.guidePhone}
             </Text>
           )}
 

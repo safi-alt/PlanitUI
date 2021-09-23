@@ -37,32 +37,6 @@ const EditProfileScreen = () => {
   // const [image, setImage] = useState('https://api.adorable.io/avatars/80/abott@adorable.png');
   const { colors } = useTheme();
   const dispatch = useDispatch();
-
-  // const takePhotoFromCamera = () => {
-  //   ImagePicker.openCamera({
-  //     compressImageMaxWidth: 300,
-  //     compressImageMaxHeight: 300,
-  //     cropping: true,
-  //     compressImageQuality: 0.7
-  //   }).then(image => {
-  //     console.log(image);
-  //     setImage(image.path);
-  //     this.bs.current.snapTo(1);
-  //   });
-  // }
-
-  // const choosePhotoFromLibrary = () => {
-  //   ImagePicker.openPicker({
-  //     width: 300,
-  //     height: 300,
-  //     cropping: true,
-  //     compressImageQuality: 0.7
-  //   }).then(image => {
-  //     console.log(image);
-  //     setImage(image.path);
-  //     this.bs.current.snapTo(1);
-  //   });
-  // }
   const userInformation = useSelector(selectUser);
   const [name, setName] = React.useState(userInformation.name);
   const [email, setEmail] = React.useState(userInformation.email);
@@ -76,10 +50,7 @@ const EditProfileScreen = () => {
 
   const [type, setType] = useState("");
 
-  useEffect(() => {
-    // console.log(userInformation);
-    console.log(userInformation.id);
-  }, []);
+  useEffect(() => {}, []);
   const [image, setImage] = useState(userInformation.avatar);
   const addImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
@@ -88,7 +59,6 @@ const EditProfileScreen = () => {
       aspect: [4, 3],
       quality: 1,
     });
-    console.log(JSON.stringify(_image));
 
     if (!_image.cancelled) {
       setImage(_image.uri);
@@ -103,7 +73,6 @@ const EditProfileScreen = () => {
       aspect: [4, 3],
       quality: 1,
     });
-    console.log(JSON.stringify(_image));
 
     if (!_image.cancelled) {
       setImage(_image.uri);
@@ -117,9 +86,6 @@ const EditProfileScreen = () => {
   };
 
   const handleEdit = async (id) => {
-    console.log("edit pressed");
-    console.log(id);
-
     const res = await fetch(
       `https://planit-fyp.herokuapp.com/api/users/update/${id}`,
       {
@@ -139,17 +105,10 @@ const EditProfileScreen = () => {
       }
     );
     const response = await res.json();
-    console.log(response);
     editData(response);
-    //storeData(response.name);
 
     if (response.token) {
       setToken(response.token);
-      // userInformation.name = name;
-      // userInformation.phone = phone;
-      // userInformation.email = email;
-      // userInformation.city = city;
-      // userInformation.country = country;
 
       dispatch(
         setUser({

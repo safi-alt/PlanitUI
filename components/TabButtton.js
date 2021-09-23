@@ -10,7 +10,6 @@ const TabButtton = (props) => {
   const _removeData = async () => {
     try {
       await AsyncStorage.clear();
-      console.log("item removed");
     } catch (error) {
       console.log(error);
     }
@@ -26,7 +25,6 @@ const TabButtton = (props) => {
         } else {
           props.setCurrentTab(props.title);
           navigation.navigate({ name: props.nav });
-          // console.log("Logout");
         }
       }}
     >

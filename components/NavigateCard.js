@@ -50,8 +50,6 @@ const NavigateCard = () => {
                     description: data.description,
                   })
                 );
-                console.log("destination", details.geometry.location);
-                console.log("destination", data.description);
                 navigation.navigate("RideOptionsCard");
               }}
               query={{

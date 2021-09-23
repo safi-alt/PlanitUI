@@ -51,8 +51,6 @@ export const PreBookDateNTime = () => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === "ios");
     setDate(currentDate);
-    // console.log(currentDate);
-    //console.log(new Date());
 
     let tempDate = new Date(currentDate);
     let fDate =
@@ -62,17 +60,14 @@ export const PreBookDateNTime = () => {
       "/" +
       tempDate.getFullYear();
     let fTime =
-      "Hours: " +
       ((tempDate.getHours() + 24) % 12 || 12) +
-      " | Minutes: " +
+      ":" +
       tempDate.getMinutes() +
-      "| " +
+      " " +
       (tempDate.getHours() >= 12 ? "pm" : "am");
     setText(fDate + "\n" + fTime);
 
     setTime(fTime);
-    //  console.log(typeof fTime);
-    //console.log(tempDate);
   };
 
   const showMode = (currentMode) => {
@@ -81,13 +76,8 @@ export const PreBookDateNTime = () => {
   };
   let socket = io("https://planit-fyp.herokuapp.com");
   useEffect(() => {
-    // console.log(orderInformation);
-    //console.log(date);
-
     setDuration(travelTimeInformation?.duration?.text);
     socket.on("guide details", (detail) => {
-      // console.log(detail);
-      // setVal(false);
       dispatch(
         setGuide({
           guideName: detail.name,
@@ -96,36 +86,7 @@ export const PreBookDateNTime = () => {
       );
       // alert(`Guide:${detail.name},Phone:${detail.phone}`);
       navigation.navigate("TourOptionsCard");
-      // setCnic(detail.cnic);
-      // setDriver(detail.driver);
-      // setMessage(detail.message);
     });
-
-    // socket.on("guide Location", (location) => {
-    //   //console.log(location);
-    //   dispatch(
-    //     setGuideLocation({
-    //       ...guideLocation,
-    //       guideLatitude: location.latitude,
-    //       guideLongitude: location.longitude,
-    //     })
-    //   );
-    // });
-
-    // socket.on("final Posiiton", (location) => {
-    //   dispatch(
-    //     setGuideLocation({
-    //       ...guideLocation,
-    //       guideLatitude: false,
-    //       guideLongitude: false,
-    //     })
-    //   );
-    // });
-
-    //   }, []);
-    // console.log(userInformation);
-    // console.log(originInformation);
-    // console.log(destinationInformation);
   }, [destinationInformation, orderInformation]);
 
   const handleEditOrder = async (id) => {
@@ -133,8 +94,6 @@ export const PreBookDateNTime = () => {
 
     let d1 = date.toISOString();
     d1 = moment(d1.split("T")[0]).format("DD/MM/YYYY");
-    console.log(d1);
-    console.log(time);
 
     const res = await fetch(
       `https://planit-fyp.herokuapp.com/api/orders/updateOrder/${id}`,
@@ -151,20 +110,8 @@ export const PreBookDateNTime = () => {
       }
     );
     const response = await res.json();
-    console.log(response);
-    // if (response) navigation.navigate("PreBookDateNTime");
-    if (response) alert("Order updated");
+
     socket.emit("order details", response);
-    // socket.emit("order details", {
-    //   Name: response.data.name,
-    //   Phone: response.data.phone,
-    //   Origin: response.data.origin,
-    //   Destination: response.data.destination,
-    //   OriginLatitude: response.data.originlatitude,
-    //   OriginLongitude: response.data.originLongitude,
-    //   DestLatitude: response.data.destLatitude,
-    //   DestLongitude: response.data.destLongitude,
-    // });
   };
 
   return (
@@ -174,12 +121,30 @@ export const PreBookDateNTime = () => {
       </Text>
       <View style={styles.cardBox}>
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <View style={{ margin: 20 }}>
-            <Button onPress={() => showMode("date")} title="Select Date" />
-          </View>
-          <View style={{ margin: 20 }}>
-            <Button onPress={() => showMode("time")} title="Select Time" />
-          </View>
+          <TouchableOpacity
+            onPress={() => showMode("date")}
+            style={{
+              margin: 20,
+              backgroundColor: Colors.primary,
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 10,
+            }}
+          >
+            <Text style={{ color: "white" }}>Select Date</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => showMode("time")}
+            style={{
+              margin: 20,
+              backgroundColor: Colors.primary,
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 10,
+            }}
+          >
+            <Text style={{ color: "white" }}>Select Time</Text>
+          </TouchableOpacity>
         </View>
         <View style={{ alignItems: "center", width: "100%" }}>
           <Text style={{ fontWeight: "bold", fontSize: 20 }}>{text}</Text>
@@ -197,7 +162,10 @@ export const PreBookDateNTime = () => {
         />
       )}
       <View
-        style={[tw`mt-auto border-t border-gray-200`, { alignItems: "center" }]}
+        style={[
+          tw`mt-auto border-t border-gray-200`,
+          { alignItems: "center", marginBottom: 20 },
+        ]}
       >
         <TouchableOpacity
           onPress={() => {
@@ -224,5 +192,8 @@ const styles = StyleSheet.create({
     paddingVertical: 30,
     marginVertical: 10,
     marginHorizontal: 50,
+  },
+  buttonColor: {
+    backgroundColor: "red",
   },
 });

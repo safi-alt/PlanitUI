@@ -290,11 +290,14 @@ const SignUpScreen = ({ navigation }) => {
       setToken(response.token);
       dispatch(
         setUser({
-          name: response.name,
-          phone: response.phone,
+          name: response.data.name,
+          phone: response.data.phone,
           token: response.token,
+          email: response.data.email,
+          id: response.data._id,
         })
       );
+
       navigation.navigate("EnterPinScreen");
       setName("");
       setEmail("");

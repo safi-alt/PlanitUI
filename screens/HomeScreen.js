@@ -24,6 +24,8 @@ import {
   setPreBookOrderId,
   selectOrigin,
   selectDestination,
+  setPreGuidePhone,
+  selectPreGuidePhone,
 } from "../slices/navSlice";
 import NavFavourites from "../components/NavFavourites";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -38,6 +40,7 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const origin = useSelector(selectOrigin);
   const destination = useSelector(selectDestination);
+  const phonePreGuide = useSelector(selectPreGuidePhone);
 
   const getData = async () => {
     try {
@@ -58,7 +61,6 @@ const HomeScreen = () => {
             avatar: obj.avatar,
           })
         );
-        console.log(obj);
       }
     } catch (e) {
       // error reading value
@@ -68,10 +70,8 @@ const HomeScreen = () => {
   React.useEffect(() => {
     socket = io("https://planit-fyp.herokuapp.com");
     getData();
-    console.log(moment().format("DD/MM/YYYY"));
+
     socket.on("pre book", (pre) => {
-      // console.log(detail);
-      // console.log(pre);
       dispatch(
         setPreBookOrderId({
           orderId: pre.order._id,
@@ -101,11 +101,9 @@ const HomeScreen = () => {
       dispatch(
         setPreBookGuide({
           guideName: pre.order.guideName,
-          guidePhone: pre.order.phone,
         })
       );
       socket.on("guide Location", (location) => {
-        console.log(location);
         dispatch(
           setGuideLocation({
             ...guideLocation,
@@ -117,6 +115,14 @@ const HomeScreen = () => {
       navigation.navigate("MapScreen", {
         screen: "TourOptionsCard",
       });
+    });
+    socket.on("guide Phone", (phone) => {
+      dispatch(
+        setPreGuidePhone({
+          ...phonePreGuide,
+          guidePhone: phone,
+        })
+      );
     });
   }, []);
 
@@ -146,7 +152,6 @@ const HomeScreen = () => {
               })
             );
             dispatch(setDestination(null));
-            console.log("Origin", details.geometry.location);
           }}
           fetchDetails={true}
           returnKeyType={"search"}

@@ -105,7 +105,7 @@
 
 // export default EnterPinScreen;
 
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -114,6 +114,7 @@ import {
   StyleSheet,
   StatusBar,
   Image,
+  TextInput,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 // import LinearGradient from "react-native-linear-gradient";
@@ -122,9 +123,40 @@ import { useTheme } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import Colors from "../../constants/Colors";
 import Input from "../../components/Input";
+import { selectUser } from "../../slices/navSlice";
+import { useSelector, useDispatch } from "react-redux";
 
 const SplashScreen = ({ navigation }) => {
   const { colors } = useTheme();
+  const userId = useSelector(selectUser);
+  const [otp, setOtp] = useState("");
+
+  const handleVerifyOtp = async (id) => {
+    const res = await fetch(
+      `https://planit-fyp.herokuapp.com/api/users/verifyOtp/${id}`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          otp: Number(otp),
+        }),
+      }
+    );
+    const response = await res.json();
+
+    if (response.message == "Successfully registered") {
+      navigation.navigate("TermsOfUseScreen");
+      // navigation.navigate("PushNotifications");
+      setOtp("");
+    } else {
+      alert(`Error:${response.msg}`);
+    }
+  };
+
+  React.useEffect(() => {}, []);
 
   return (
     <View style={styles.container}>
@@ -161,12 +193,20 @@ const SplashScreen = ({ navigation }) => {
             blurOnSubmit
             autoCapitilize="none"
             keyboardType="number-pad"
-            maxLength={4}
+            maxLength={7}
+            value={otp}
+            onChangeText={(otp) => {
+              // textInputChanged(phone);
+              // setPhone(phone);
+              setOtp(otp);
+            }}
             style={{
               width: "30%",
               fontSize: 40,
               marginTop: 10,
               marginBottom: 10,
+              height: "30%",
+              color: "#05375a",
             }}
           />
 
@@ -184,7 +224,9 @@ const SplashScreen = ({ navigation }) => {
               </LinearGradient>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => navigation.navigate("TermsOfUseScreen")}
+              onPress={() => {
+                handleVerifyOtp(userId.id);
+              }}
             >
               <LinearGradient
                 colors={["#08d4c4", "#01ab9d"]}
@@ -254,5 +296,11 @@ const styles = StyleSheet.create({
   textSign: {
     color: "white",
     fontWeight: "bold",
+  },
+  textInput: {
+    flex: 1,
+    marginTop: Platform.OS === "ios" ? 0 : -12,
+    paddingLeft: 10,
+    color: "#05375a",
   },
 });

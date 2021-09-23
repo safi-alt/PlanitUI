@@ -142,8 +142,6 @@ const SignInScreen = ({ navigation }) => {
       }
     );
     const response = await res.json();
-    // console.log(response);
-    //storeData(response.name);
 
     if (response.token) {
       storeData(response);

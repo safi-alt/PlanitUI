@@ -65,18 +65,10 @@ const Payments = () => {
   const [data, setData] = React.useState([]);
 
   const getData = async (id) => {
-    // value previously stored
-    // console.log(value);
-    //const val = JSON.parse(value);
-    //const userId = val.id;
     const res = await fetch(
       `https://planit-fyp.herokuapp.com/api/orders/getUserOrders/${id}`
     );
     const response = await res.json();
-    console.log(response);
-    // console.log(response.data);
-    // const orders = response.data.map((x) => x);
-    // console.log(orders);
     const orders = response.userOrders.map((x) => {
       return {
         key: x._id,
@@ -88,17 +80,12 @@ const Payments = () => {
         cost: x.cost,
       };
     });
-    //console.log(orders);
     setData(orders);
   };
 
   useEffect(() => {
     setUser(userInformation.id);
     getData(userInformation.id);
-    // console.log(paymentInformation);
-    // console.log(paymentInformation);
-    //getPayment(userInformation.id);
-    //console.log(labels);
   }, [userInformation]);
 
   const handleSubmitPayment = async () => {
@@ -116,18 +103,6 @@ const Payments = () => {
       }),
     });
     const response = await res.json();
-    console.log(response);
-    // socket.emit("order details", response);
-    // socket.emit("order details", {
-    //   Name: response.data.name,
-    //   Phone: response.data.phone,
-    //   Origin: response.data.origin,
-    //   Destination: response.data.destination,
-    //   OriginLatitude: response.data.originlatitude,
-    //   OriginLongitude: response.data.originLongitude,
-    //   DestLatitude: response.data.destLatitude,
-    //   DestLongitude: response.data.destLongitude,
-    // });
   };
 
   const onChange = (form) => {

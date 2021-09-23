@@ -79,58 +79,13 @@ const PreBookRideOptionsCard = () => {
   let socket = io("https://planit-fyp.herokuapp.com");
 
   useEffect(() => {
-    console.log(userInformation);
-    //console.log(travelTimeInformation);
     setDuration(travelTimeInformation?.duration?.text);
-    // socket.on("guide details", (detail) => {
-    //   // console.log(detail);
-    //   setVal(false);
-    //   dispatch(
-    //     setGuide({
-    //       guideName: detail.name,
-    //       guidePhone: detail.phone,
-    //     })
-    //   );
-    //   // alert(`Guide:${detail.name},Phone:${detail.phone}`);
-    //   navigation.navigate("TourOptionsCard");
-    //   // setCnic(detail.cnic);
-    //   // setDriver(detail.driver);
-    //   // setMessage(detail.message);
-    // });
-
-    // socket.on("guide Location", (location) => {
-    //   //console.log(location);
-    //   dispatch(
-    //     setGuideLocation({
-    //       ...guideLocation,
-    //       guideLatitude: location.latitude,
-    //       guideLongitude: location.longitude,
-    //     })
-    //   );
-    // });
-
-    // socket.on("final Posiiton", (location) => {
-    //   dispatch(
-    //     setGuideLocation({
-    //       ...guideLocation,
-    //       guideLatitude: false,
-    //       guideLongitude: false,
-    //     })
-    //   );
-    // });
-
-    //   }, []);
-    // console.log(userInformation);
-    // console.log(originInformation);
-    // console.log(destinationInformation);
   }, [destinationInformation, travelTimeInformation]);
 
   const handleSubmitOrder = async () => {
     setVal(true);
     var finalCost = cost.filter((x) => x.id === isSelect.id).map((x) => x.pay);
-    console.log(finalCost);
-    console.log(duration);
-    //console.log(travelTimeInformation);
+
     const res = await fetch(`https://planit-fyp.herokuapp.com/api/orders/`, {
       method: "POST",
       headers: {
@@ -155,20 +110,8 @@ const PreBookRideOptionsCard = () => {
       }),
     });
     const response = await res.json();
-    console.log(response);
     dispatch(setOrder(response));
     if (response) navigation.navigate("PreBookDateNTime");
-
-    // socket.emit("order details", {
-    //   Name: response.data.name,
-    //   Phone: response.data.phone,
-    //   Origin: response.data.origin,
-    //   Destination: response.data.destination,
-    //   OriginLatitude: response.data.originlatitude,
-    //   OriginLongitude: response.data.originLongitude,
-    //   DestLatitude: response.data.destLatitude,
-    //   DestLongitude: response.data.destLongitude,
-    // });
   };
 
   return (

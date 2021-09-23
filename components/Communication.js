@@ -7,10 +7,21 @@ import { FontAwesome } from "@expo/vector-icons";
 import io from "socket.io-client";
 import { TouchableOpacity } from "react-native";
 import Colors from "../constants/Colors";
+import {
+  selectGuide,
+  selectPreBookGuide,
+  selectPreGuidePhone,
+} from "../slices/navSlice";
+import { useSelector } from "react-redux";
 
 const Communication = () => {
+  const guideInformation = useSelector(selectGuide);
+  const preBookGuideInformation = useSelector(selectPreBookGuide);
+  const phonePreGuide = useSelector(selectPreGuidePhone);
   const dialCall = () => {
-    let phoneNumber = "03352097647";
+    let phoneNumber = guideInformation?.guidePhone
+      ? guideInformation.guidePhone
+      : phonePreGuide.guidePhone;
     if (Platform.OS === "android") {
       phoneNumber = `tel:${phoneNumber}`;
       //  setPressed(true);
@@ -22,10 +33,13 @@ const Communication = () => {
   };
 
   const whatsappCall = () => {
-    let phoneNumber = "923352097647";
+    let phoneNumber = guideInformation?.guidePhone
+      ? guideInformation.guidePhone
+      : phonePreGuide.guidePhone;
     let url = `whatsapp://send?phone=${phoneNumber}`;
     Linking.openURL(url);
   };
+  useEffect(() => {}, []);
   return (
     <View
       style={{

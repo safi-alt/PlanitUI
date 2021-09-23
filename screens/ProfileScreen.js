@@ -17,10 +17,6 @@ import { useSelector } from "react-redux";
 import profile from "../assets/safi.jpg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// import Share from 'react-native-share';
-
-// import files from '../assets/filesBase64';
-
 const ProfileScreen = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -30,11 +26,8 @@ const ProfileScreen = () => {
   const userInformation = useSelector(selectUser);
 
   const getData = async () => {
-    console.log("Hello wrold");
     const value = await AsyncStorage.getItem("@storage_Key");
 
-    // value previously stored
-    // console.log(value);
     const val = JSON.parse(value);
     const userId = userInformation.id;
     const res = await fetch(
@@ -42,47 +35,30 @@ const ProfileScreen = () => {
     );
     const response = await res.json();
     setOrdersLength(response.userOrders.length);
-
-    // console.log('Helloo');
   };
 
   const getTransactions = async () => {
     try {
       const value = await AsyncStorage.getItem("@storage_Key");
       if (userInformation.token) {
-        // value previously stored
-        // console.log(value);
         const val = JSON.parse(value);
         const userId = userInformation.id;
-        console.log(userId);
         const res = await fetch(
           `https://planit-fyp.herokuapp.com/api/transaction/getUserTransaction/${userId}`
         );
         const response = await res.json();
-        console.log(response);
-        //console.log(response.filterTransaction);
+
         let moneyArray = response.filterTransaction.map((x) => Number(x.cost));
         let earnings = moneyArray.reduce((a, b) => Math.round(a + b), 0);
         setEarnings(earnings);
-
-        //setEarnings(response.cost);
       }
     } catch (e) {
       // error reading value
     }
   };
 
-  // useEffect(() => {
-  //   getData();
-  //   //getTransactions();
-  //   console.log(userInformation.id);
-  //   // console.log('Hello world');
-  // });
-  //file:///storage/emulated/0/Android/data/com.driverapp/files/Pictures/00b12f50-8ba1-4856-96ff-b0f3eebaebdb.jpg
-  // const [image, setImage] = React.useState(userInformation.avatar);
   const [image, setImage] = React.useState(userInformation.avatar);
   React.useEffect(() => {
-    //console.log(userInformation);
     setImage(userInformation.avatar);
     getData();
     getTransactions();
@@ -110,7 +86,7 @@ const ProfileScreen = () => {
             >
               {userInformation.name}
             </Title>
-            <Caption style={styles.caption}>@j_doe</Caption>
+            <Caption style={styles.caption}>{userInformation.email}</Caption>
           </View>
         </View>
       </View>

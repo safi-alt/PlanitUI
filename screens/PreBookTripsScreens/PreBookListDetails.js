@@ -10,14 +10,15 @@ import {
 import AntDesign from "react-native-vector-icons/AntDesign";
 import * as Animatable from "react-native-animatable";
 import { SharedElement } from "react-navigation-shared-element";
-
+import profile from "../../assets/safi.jpg";
 import { detailsIcons } from "./PreBook";
 
 const DURATION = 400;
 const { width, height } = Dimensions.get("screen");
 const SPACING = 10;
 const ITEM_HEIGHT = height * 0.18;
-const TOP_HEADER_HEIGHT = height * 0.3;
+const TOP_HEADER_HEIGHT = height * 0.15;
+const AVATAR_SIZE = 70;
 
 const PreBookListDetails = ({ navigation, route }) => {
   const { item } = route.params;
@@ -52,7 +53,7 @@ const PreBookListDetails = ({ navigation, route }) => {
         />
       </SharedElement>
       <SharedElement id={`item.${item.key}.name`}>
-        <Text style={styles.name}>{item.name}</Text>
+        <Text style={styles.name}>Trip Details</Text>
       </SharedElement>
       <SharedElement id={`item.${item.key}.image`}>
         <Image source={{ uri: item.image }} style={styles.image} />
@@ -68,25 +69,15 @@ const PreBookListDetails = ({ navigation, route }) => {
                 marginBottom: SPACING + 32,
               }}
             >
-              {detailsIcons.map((detail, index) => {
-                return (
-                  <Animatable.View
-                    animation="bounceIn"
-                    delay={DURATION + index * 100}
-                    key={`${detail.icon}-${index}`}
-                    style={{
-                      backgroundColor: detail.color,
-                      height: 64,
-                      width: 64,
-                      borderRadius: 32,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <AntDesign name={detail.icon} size={22} color={"white"} />
-                  </Animatable.View>
-                );
-              })}
+              <Image
+                source={profile}
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: AVATAR_SIZE,
+                  marginRight: SPACING / 2,
+                }}
+              />
             </View>
             <View>
               <Animatable.View
@@ -95,7 +86,7 @@ const PreBookListDetails = ({ navigation, route }) => {
                 key={item.key}
                 style={{ marginVertical: SPACING }}
               >
-                <Text style={styles.title}>{item.name}</Text>
+                <Text style={styles.title}>{item.guideName}</Text>
 
                 <View
                   key={item.key}
@@ -106,7 +97,7 @@ const PreBookListDetails = ({ navigation, route }) => {
                     marginLeft: SPACING,
                   }}
                 >
-                  <View
+                  {/* <View
                     style={{
                       height: 8,
                       width: 8,
@@ -114,11 +105,62 @@ const PreBookListDetails = ({ navigation, route }) => {
                       backgroundColor: "gold",
                       marginRight: SPACING,
                     }}
-                  />
-                  <Text style={styles.subTitle}>{item.date}</Text>
-                  <Text style={styles.subTitle}>{item.time}</Text>
-                  <Text style={styles.subTitle}>{item.origin}</Text>
-                  <Text style={styles.subTitle}>{item.destination}</Text>
+                  /> */}
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      opacity: 0.7,
+                      color: "black",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <Text style={{ color: "green", fontWeight: "bold" }}>
+                      Date:{" "}
+                    </Text>
+                    {item.date}
+                  </Text>
+
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      opacity: 0.7,
+                      color: "black",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <Text style={{ color: "green", fontWeight: "bold" }}>
+                      Time:{" "}
+                    </Text>
+                    {item.time}
+                  </Text>
+
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      opacity: 0.7,
+                      color: "black",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <Text style={{ color: "green", fontWeight: "bold" }}>
+                      Pickup:{" "}
+                    </Text>
+                    {item.origin}
+                  </Text>
+
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      opacity: 0.7,
+                      color: "black",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <Text style={{ color: "green", fontWeight: "bold" }}>
+                      Destination:{" "}
+                    </Text>
+                    {item.destination}
+                  </Text>
                 </View>
               </Animatable.View>
             </View>
@@ -215,8 +257,9 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "700",
-    fontSize: 20,
+    fontSize: 25,
     marginBottom: SPACING,
+    textAlign: "center",
   },
   subTitle: {
     fontSize: 14,

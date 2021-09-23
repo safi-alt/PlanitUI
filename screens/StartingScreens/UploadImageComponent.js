@@ -19,7 +19,6 @@ export default function UploadImage() {
       aspect: [4, 3],
       quality: 1,
     });
-    console.log(JSON.stringify(_image));
 
     if (!_image.cancelled) {
       setImage(_image.uri);
@@ -33,7 +32,6 @@ export default function UploadImage() {
       aspect: [4, 3],
       quality: 1,
     });
-    console.log(JSON.stringify(_image));
 
     if (!_image.cancelled) {
       setImage(_image.uri);

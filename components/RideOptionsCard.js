@@ -87,12 +87,10 @@ const RideOptionsCard = () => {
   const [orderId, setOrderId] = useState("");
 
   useEffect(() => {
-    // console.log(travelTimeInformation);
     socket = io("https://planit-fyp.herokuapp.com");
     setDuration(travelTimeInformation?.duration?.text);
 
     socket.on("guide details", (detail) => {
-      // console.log(detail);
       setVal(false);
       dispatch(
         setGuide({
@@ -108,7 +106,6 @@ const RideOptionsCard = () => {
     });
 
     socket.on("guide Location", (location) => {
-      //console.log(location);
       dispatch(
         setGuideLocation({
           ...guideLocation,
@@ -127,25 +124,6 @@ const RideOptionsCard = () => {
         })
       );
     });
-
-    // socket.on("trip completed", (response) => {
-    //   // dispatch(
-    //   //   setDestination({
-    //   //     location: null,
-    //   //     description: null,
-    //   //   })
-    //   // );
-    //   setGuideLocation(null);
-    //   setGuide(null);
-    //   setOrigin(null);
-    //   setDestination(null);
-    //   setOrder(null);
-    //   setTravelTimeInformation(null);
-    //   //navigation.navigate("RideOptionsCard");
-    //   setVisible(true);
-
-    //   console.log("Hello modal");
-    // });
   }, [destinationInformation, travelTimeInformation]);
 
   const handleEditOrder = async (id) => {
@@ -163,12 +141,9 @@ const RideOptionsCard = () => {
       }
     );
     const response = await res.json();
-    // console.log(response);
   };
 
   const payment = (payment) => {
-    console.log("Hello");
-    // console.log(paymentMethod);
     socket.emit("payment method", payment);
     handleEditOrder(orderId);
     setGuideLocation(null);
@@ -181,8 +156,6 @@ const RideOptionsCard = () => {
   };
 
   const paymentCard = (payment) => {
-    console.log("Hello");
-    // console.log(paymentMethod);
     socket.emit("payment card", payment);
     handleEditOrder(orderId);
     setGuideLocation(null);
@@ -197,12 +170,7 @@ const RideOptionsCard = () => {
   const handleSubmitOrder = async () => {
     setVal(true);
     var finalCost = cost.filter((x) => x.id === selected.id).map((x) => x.pay);
-    //console.log(finalCost[0]);
-    // console.log();
-    //console.log(cost);
-    // console.log(duration);
-    //console.log(travelTimeInformation);
-    console.log(selected);
+
     var date = moment().format("DD/MM/YYYY");
     const res = await fetch(`https://planit-fyp.herokuapp.com/api/orders/`, {
       method: "POST",
@@ -236,7 +204,6 @@ const RideOptionsCard = () => {
       })
     );
 
-    //console.log(response);
     socket.emit("order details", response);
   };
 

@@ -15,6 +15,7 @@ import {
   selectPreOrigin,
   selectPreDestination,
   selectPreTravelTimeInformation,
+  selectTravelTimeInformation,
 } from "../slices/navSlice";
 import { GOOGLE_MAPS_APIKEY } from "@env";
 
@@ -23,7 +24,7 @@ const Map = () => {
   const destination = useSelector(selectDestination);
   const preOrigin = useSelector(selectPreOrigin);
   const preDestination = useSelector(selectPreDestination);
-  const preTravelTimeInformation = useSelector(selectPreTravelTimeInformation);
+  const travelTimeInformation = useSelector(selectTravelTimeInformation);
   const guideLocation = useSelector(selectGuideLocation);
   const mapRef = useRef();
   const dispatch = useDispatch();
@@ -40,8 +41,6 @@ const Map = () => {
   // }, [origin, destination, preOrigin, preDestination]);
 
   useEffect(() => {
-    // console.log(guideLocation);
-    //console.log(destination.description);
     if (!origin || !destination) return;
     const getTravelTime = async () => {
       fetch(
@@ -49,13 +48,9 @@ const Map = () => {
       )
         .then((res) => res.json())
         .then((data) => {
-          // console.log(data);
-          console.log(data.rows[0].elements[0]);
           dispatch(setTravelTimeInformation(data.rows[0].elements[0]));
         });
     };
-    console.log(preOrigin);
-    console.log(preDestination);
     getTravelTime();
   }, [origin, destination, GOOGLE_MAPS_APIKEY, guideLocation]);
 
@@ -127,6 +122,7 @@ const Map = () => {
           title="Origin"
           description={origin.description}
           identifier="origin"
+          pinColor={"green"}
         />
       )}
       {preOrigin?.lat && (
@@ -138,6 +134,7 @@ const Map = () => {
           title="Origin"
           description={preOrigin.description}
           identifier="origin"
+          pinColor={"green"}
         />
       )}
 
@@ -154,6 +151,8 @@ const Map = () => {
           title="Destination"
           description={destination.description}
           identifier="destination"
+          // pinColor={guideLocation ? "green" : "red"}
+          pinColor={"green"}
         />
       )}
       {preDestination?.lat && (
@@ -169,6 +168,8 @@ const Map = () => {
           title="Destination"
           description={preDestination.description}
           identifier="destination"
+          // pinColor={guideLocation ? "green" : "red"}
+          pinColor={"green"}
         />
       )}
     </MapView>
